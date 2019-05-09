@@ -1,8 +1,6 @@
 #include "GameEngine.hpp"
+#include <iostream>
 
-GameEngine::GameEngine(S2D_Window &windowGiven) : window(windowGiven)
-{
-}
 
 void drawBlackLine(int l1x, int l1y, int l2x, int l2y, int lineWidth)
 {
@@ -90,23 +88,67 @@ void render(){
     }
 }
 
+void on_mouse(S2D_Event e)
+{
+    switch (e.type)
+    {
+    case S2D_MOUSE_DOWN:
+        // Mouse button was pressed
+        std::cout << "down" << std::endl;
+        // Use `e.button` to see what button was clicked
+        // Check `e.dblclick` to see if was a double click
+        break;
+
+    case S2D_MOUSE_UP:
+        // Mouse button was released
+        // Use `e.button` to see what button was clicked
+        // Check `e.dblclick` to see if was a double click
+        break;
+
+    case S2D_MOUSE_SCROLL:
+        // Mouse was scrolled
+        // Check `e.direction` for direction being scrolled, normal or inverted:
+        //   S2D_MOUSE_SCROLL_NORMAL
+        //   S2D_MOUSE_SCROLL_INVERTED
+        // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+        break;
+
+    case S2D_MOUSE_MOVE:
+        // Mouse was moved
+        // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+        break;
+    }
+}
+
+GameEngine::GameEngine()
+{
+    S2D_Window *windowGiven = S2D_CreateWindow(
+        "Game", 1000, 700, update, render, 0);
+    window = windowGiven;
+    window->on_mouse = on_mouse;
+}
+GameEngine::~GameEngine()
+{
+    S2D_FreeWindow(window);
+}
+
 void GameEngine::start()
 {
-    window.background.r = 0.5;
-    window.background.g = 0.5;
-    window.background.b = 0.5;
-    window.background.a = 1.0;
+    /*window->background.r = 0.5;
+    window->background.g = 0.5;
+    window->background.b = 0.5;
+    window->background.a = 1.0;
 
-    window.width = 1000;
-    window.height = 700;
-    window.title = "Strategy";
-    window.update = &update;
-    window.render = &render;
+    window->width = 1000;
+    window->height = 700;
+    window->title = "Strategy";
+    window->update = &update;
+    window->render = &render;*/
 
-    S2D_Show(&window);
+    S2D_Show(window);
 }
 
 void GameEngine::stop()
 {
-    S2D_Close(&window);
+    S2D_Close(window);
 }

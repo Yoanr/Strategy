@@ -1,13 +1,5 @@
 
-#include <simple2d.h>
 #include "GameEngine.hpp"
-
-void render()
-{
-}
-
-void update(){
-}
 
 int main()
 {
@@ -25,12 +17,9 @@ int main()
 
     }*/
 
-    S2D_Window *window = S2D_CreateWindow(
-        "Menu", 500, 500, update, render, 0);
-    
-    S2D_Close(window);
 
-    GameEngine gameEngine(*window);
+
+    GameEngine gameEngine;
     gameEngine.start();
 
     return 0;

@@ -6,13 +6,13 @@
 class GameEngine
 {
 public:
-    GameEngine(S2D_Window &windowGiven);
+    GameEngine();
     ~GameEngine();
     void start();
     void stop();
 
 private:
-    S2D_Window& window;
+    S2D_Window* window;
 };
 
 #endif
