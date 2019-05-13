@@ -1,4 +1,5 @@
 
+#include "Interaction.hpp"
 #include "GameEngine.hpp"
 
 int main()
@@ -16,11 +17,11 @@ int main()
             }
 
     }*/
+   GameEngine gameEngine;
+   Interaction interaction(gameEngine);
 
+   interaction.init();
+   interaction.start();
 
-
-    GameEngine gameEngine;
-    gameEngine.start();
-
-    return 0;
+   return 0;
 }

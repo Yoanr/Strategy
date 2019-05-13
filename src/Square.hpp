@@ -6,15 +6,21 @@
 class Square
 {
 public:
-    Square();
+    enum Type
+    {
+        basic = 0,
+        bomb = 1,
+        tower = 2
+    };
+    Square(Type t);
     ~Square();
 
 private:
-    Army army;
     int r;
     int g;
     int b;
     int a;
+    Type t;
 
 };
 
