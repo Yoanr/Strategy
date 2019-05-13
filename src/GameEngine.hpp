@@ -2,6 +2,7 @@
 #define GAMEENGINE_H
 
 #include "Square.hpp"
+#include "Player.hpp"
 #include <map>
 
 class GameEngine
@@ -9,6 +10,8 @@ class GameEngine
 public:
     GameEngine();
     ~GameEngine();
+    void idle();
+    std::pair<int,int> getPossibleArmy(int i,int j);
     Square& getSquare(int i,int j);
 
 private:
@@ -16,12 +19,17 @@ private:
     std::map<std::pair<int, int>, Square> board;
     const int PROBABOMB{20};
     const int GRIDSIZE = 12;
-    const std::pair<int,int> SPAWNP1{5,0};
+    const std::pair<int, int> SPAWNP1{5, 0};
     const std::pair<int, int> SPAWNP2{5, 10};
 
     const std::pair<int, int> TOWER1{1, 5};
     const std::pair<int, int> TOWER2{5, 5};
     const std::pair<int, int> TOWER3{9, 5};
+
+    int numberOfRound{0};
+    void round(Player player, const std::pair<int, int> SPAWN);
+    Player player1{1};
+    Player player2{2};
 };
 
 #endif

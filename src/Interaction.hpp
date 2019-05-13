@@ -17,6 +17,8 @@ private:
     S2D_Window *window;
     void onMouse(S2D_Event e);
     void render();
+    void drawField(int i, int j, int lineWidth, int squareSize);
+    void drawPossibleArmy(int i, int j, int lineWidth, int squareSize);
     GameEngine gameEngine;
 };
 

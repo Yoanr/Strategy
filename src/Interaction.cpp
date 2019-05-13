@@ -9,6 +9,7 @@
 
 void Interaction::render()
 {
+    //Draw::buttons();
     int gridSize = 11;
     int lineWidth = 2;
     int squareSize = 50;
@@ -17,9 +18,23 @@ void Interaction::render()
     {
         for (int j = 0; j <  gridSize; j++)
         {
-            Draw::D2Lines(i, j, lineWidth, squareSize, 0, 0, 0); //Black color
-            Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j).getType());
+            drawField(i, j, squareSize, lineWidth);
+            drawPossibleArmy(i, j, squareSize,lineWidth);
         }
+    }
+}
+
+void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
+{
+    Draw::D2Lines(i, j, lineWidth, squareSize, 0, 0, 0); //Black color
+    Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j).getType());
+}
+
+void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth)
+{
+    std::pair<int,int> p = gameEngine.getPossibleArmy(i,j);
+    if(p.second != 0){
+        Draw::army(i, j, squareSize, lineWidth, p.first, p.second);
     }
 }
 
@@ -65,7 +80,6 @@ void Interaction::init()
 
     window->on_mouse = Lambda::make_function_ptr([this](S2D_Event event) { onMouse(event); });
     window->render = Lambda::make_function_ptr([this]() { render(); });
-
     S2D_Show(window);
 }
 
