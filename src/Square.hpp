@@ -10,10 +10,13 @@ public:
     {
         basic = 0,
         bomb = 1,
-        tower = 2
+        tower = 2,
+        spawn1 = 3,
+        spawn2 = 4
     };
     Square(Type t);
     ~Square();
+    Type getType();
 
 private:
     int r;
