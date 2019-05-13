@@ -3,7 +3,7 @@ CFLAGS = -Wall -Werror -pedantic -Wextra -std=c++14
 EXEC_NAME = bin/warY
 INCLUDES = `simple2d --libs`
 LIBS =
-SRC_FILES = src/main.cpp
+SRC_FILES = src/main.cpp src/Interaction.cpp src/GameEngine.cpp src/Square.cpp src/Player.cpp
 INSTALL_DIR = /usr/bin
 
 all :

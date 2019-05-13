@@ -9,7 +9,6 @@ public:
     ~Player();
 
 private:
-    std::string name;
     int id;
 };
 
