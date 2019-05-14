@@ -3,6 +3,8 @@
 
 #include <simple2d.h>
 #include "GameEngine.hpp"
+#include "color.hpp"
+
 using namespace std;
 class Interaction {
 public:

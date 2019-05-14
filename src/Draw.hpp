@@ -2,16 +2,19 @@
 #define DRAw_HPP
 
 #include "Square.hpp"
+#include "color.hpp"
+#include <iostream>
+using namespace std;
+
 
 class Draw
 {
 public:
-    static void line(int l1x, int l1y, int l2x, int l2y, int lineWidth, float r, float g, float b);
-    static void D2Lines(int i, int j, int lineWidth, int squareSize, float r, float g, float b);
-    static void D4Lines(int i, int j, int lineWidth, int squareSize, float r, float g, float b);
-    static void square(int i, int j, int squareSize, int lineWidth, Square square);
-    static void buttons();
-    static void armyPower(int i, int j, int squareSize, int lineWidth, int armyPower);
+    static void line(int l1x, int l1y, int l2x, int l2y, int lineWidth, color::Color color);
+    static void D2Lines(pair<int,int> position, int lineWidth, int squareSize, color::Color color);
+    static void D4Lines(pair<int, int> position, int lineWidth, int squareSize, color::Color color);
+    static void square(pair<int, int> position, int squareSize, int lineWidth, Square square);
+    static void armyPower(pair<int, int> position, int squareSize, int lineWidth, int armyPower);
 };
 
 #endif

@@ -9,7 +9,6 @@
 
 void Interaction::render()
 {
-    //Draw::buttons();
     for (int i = 0; i < NUMBEROFSQUARE; i++)
     {
         for (int j = 0; j < NUMBEROFSQUARE; j++)
@@ -22,8 +21,8 @@ void Interaction::render()
 
 void Interaction::drawField(pair<int, int> position)
 {
-    Draw::D2Lines(position.first, position.second, LINEWIDTH, SQUARESIZE, 0, 0, 0); //Black color
-    Draw::square(position.first, position.second, SQUARESIZE, LINEWIDTH, gameEngine.getSquare(position));
+    Draw::D2Lines(position, LINEWIDTH, SQUARESIZE, color::Color{0,0,0,0}); //Black color
+    Draw::square(position, SQUARESIZE, LINEWIDTH, gameEngine.getSquare(position));
 }
 
 void Interaction::drawPossibleArmy(pair<int, int> position)
@@ -32,7 +31,7 @@ void Interaction::drawPossibleArmy(pair<int, int> position)
 
     if (p.second != 0) {
         setColorSquareByPlayer(position, p.first);
-        Draw::armyPower(position.first, position.second, SQUARESIZE, LINEWIDTH, p.second);
+        Draw::armyPower(position, SQUARESIZE, LINEWIDTH, p.second);
     }
 }
 
