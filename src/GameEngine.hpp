@@ -27,7 +27,7 @@ private:
     const std::pair<int, int> TOWER3{9, 5};
 
     int numberOfRound{0};
-    void round(Player player, const std::pair<int, int> SPAWN);
+   // void round(Player player, const std::pair<int, int> SPAWN);
     Player player1{1};
     Player player2{2};
 };

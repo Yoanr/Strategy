@@ -32,9 +32,10 @@ void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
 
 void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth)
 {
-    std::pair<int,int> p = gameEngine.getPossibleArmy(i,j);
+    std::pair<int,int> p = gameEngine.getPossibleArmy(i,j); // <,>
     if(p.second != 0){
-        Draw::army(i, j, squareSize, lineWidth, p.first, p.second);
+        Draw::army(i, j, squareSize, lineWidth, p.first);
+        Draw::armyPower(i, j, squareSize, lineWidth, p.second);
     }
 }
 
@@ -79,7 +80,8 @@ void Interaction::init()
     window = windowGiven;
 
     window->on_mouse = Lambda::make_function_ptr([this](S2D_Event event) { onMouse(event); });
-    window->render = Lambda::make_function_ptr([this]() { render(); });
+    window->render = Lambda::make_function_ptr([this]() { render(); });   
+        
     S2D_Show(window);
 }
 

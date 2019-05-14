@@ -83,7 +83,7 @@ void Draw::square(int i, int j, int squareSize, int lineWidth, Square::Type squa
                      x4, y4, 1, 1, 1, 1);
     }
 }
-void Draw::army(int i, int j, int squareSize, int lineWidth, int idPLayer,int armyPower){
+void Draw::army(int i, int j, int squareSize, int lineWidth, int idPLayer){
     int x1 = i * squareSize + lineWidth;
     int y1 = j * squareSize + lineWidth;
     int x2 = x1 + squareSize - lineWidth;
@@ -110,12 +110,6 @@ void Draw::army(int i, int j, int squareSize, int lineWidth, int idPLayer,int ar
         break;
 
     }
-   armyPower++;
-   /*std::string s = std::to_string(armyPower);
-    S2D_Text *txt = S2D_CreateText("vera.ttf", s.c_str(), 10);
-    txt->x = x1;
-    txt->y = y1;
-    S2D_DrawText(txt);*/
 }
 
 void Draw::buttons(){
@@ -123,4 +117,32 @@ void Draw::buttons(){
                  800, 100, 1, 1, 1, 1,
                  x3, y3, 1, 1, 1, 1,
                  x4, y4, 1, 1, 1, 1);*/
+}
+
+void Draw::armyPower(int i, int j, int squareSize, int lineWidth, int armyPower)
+{
+    std::string armyPowerStr = std::to_string(armyPower);
+    int txtSize = 0;
+    if(armyPower > 9) {
+        txtSize = 25;
+    }else{
+        txtSize = 30;
+    }
+   
+    S2D_Text *txt = S2D_CreateText("./resources/fonts/verdana.ttf", armyPowerStr.c_str(), txtSize);
+    if (txt)
+    {
+        txt->color.r = 1;
+        txt->color.g = 1;
+        txt->color.b = 1;
+        txt->color.a = 1;
+        txt->x = i * squareSize - (lineWidth) + txtSize/2;
+        txt->y = j * squareSize - (lineWidth) + txtSize/3;
+        S2D_DrawText(txt);
+    }
+    else
+    {
+        std::cout << "fonts error" << std::endl;
+    }
+    S2D_FreeText(txt);
 }

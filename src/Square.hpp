@@ -1,6 +1,7 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
+
 class Square
 {
 public:
@@ -22,7 +23,6 @@ private:
     int b;
     int a;
     Type t;
-
 };
 
 #endif
