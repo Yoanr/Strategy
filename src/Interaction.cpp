@@ -17,7 +17,7 @@ void Interaction::render()
         for (int j = 0; j < NUMBEROFSQUARE; j++)
         {
             drawField(i, j, SQUARESIZE, lineWidth);
-            drawPossibleArmy(i, j);
+            drawPossibleArmy(i, j, SQUARESIZE, lineWidth);
         }
     }
 }
@@ -28,19 +28,24 @@ void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
     Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j));
 }
 
-void Interaction::drawPossibleArmy(int i, int j) {
+void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth) {
     std::pair<int, int> p = gameEngine.getPossibleArmy(i, j); // <,>
 
     if (p.second != 0) {
-        switch (p.first) {
-            case 1:
-                gameEngine.getSquare(i, j).setColor(1, 0, 0);
-                break;
+        setColorSquareByPlayer(i, j, p.first);
+        Draw::armyPower(i, j, squareSize, lineWidth, p.second);
+    }
+}
 
-            case 2:
-                gameEngine.getSquare(i, j).setColor(0, 0, 1);
-                break;
-        }
+void Interaction::setColorSquareByPlayer(int i, int j, int idPlayer){
+    switch (idPlayer) {
+        case 1:
+            gameEngine.getSquare(i, j).setColor(1, 0, 0);
+            break;
+
+        case 2:
+            gameEngine.getSquare(i, j).setColor(0, 0, 1);
+            break;
     }
 }
 
@@ -70,12 +75,31 @@ bool Interaction::checkSecondClick(std::pair<int,int>  position)
     { // Positions ?
         return false;
     }
-    std::pair<int, int> indexes = getIndexByMousePosition(position);
-    if (gameEngine.getSelectedSquare() == indexes) // Army ?
+    std::pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+    std::pair<int, int> newIndexes = getIndexByMousePosition(position);
+    if (oldIndexes == newIndexes) // Army ?
     {
         return false;
     }
+
+    //Check the move
+    if ( (newIndexes.first != oldIndexes.first + 1 && newIndexes.first != oldIndexes.first - 1 && newIndexes.first != oldIndexes.first)  ||
+         (newIndexes.second != oldIndexes.second + 1 && newIndexes.second != oldIndexes.second - 1 && newIndexes.second != oldIndexes.second)) {
+        return false;
+    }
+
     return true;
+}
+
+void Interaction::setSelectedSquare(int i, int j, bool isSelected){
+    gameEngine.getSquare(i, j).setA(isSelected ? 0.8 : 1);
+}
+
+//TODO Not finished
+void Interaction::moveSquare(std::pair<int, int> oldIndexes, std::pair<int, int> newIndexes){
+    gameEngine.getSquare(oldIndexes.first, oldIndexes.second).setColor(0, 1, 0); //not working
+
+    setColorSquareByPlayer(newIndexes.first, newIndexes.second, gameEngine.getCurrentIdPlayer());
 }
 
 void Interaction::onMouse(S2D_Event e)
@@ -87,19 +111,29 @@ void Interaction::onMouse(S2D_Event e)
             if(alreadyClicked){
 
                 if(checkSecondClick(position)){
+                    std::pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+                    std::pair<int, int> newIndexes = getIndexByMousePosition(position);
+
                     gameEngine.resetSelectedSquare();
+                    setSelectedSquare(oldIndexes.first, oldIndexes.second, false);
+
                     alreadyClicked = false;
+
+                    moveSquare(oldIndexes, newIndexes); //TODO not always a move action
+
                     gameEngine.switchCurrentPlayer();
                 }
 
-        }else{
-            if (checkFirstClick(position))
-            {
-                gameEngine.setSelectedSquare(position);
-                gameEngine.getSquare(position.first,position.second).setA(0);
-                alreadyClicked = true;
+            }else{
+                if (checkFirstClick(position))
+                {
+                    gameEngine.setSelectedSquare(position);
+                    setSelectedSquare(getIndexByMousePosition(position).first, getIndexByMousePosition(position).second, true);
+
+                    alreadyClicked = true;
+                }
             }
-        }
+
             break;
 
         case S2D_MOUSE_UP:

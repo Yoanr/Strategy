@@ -4,8 +4,7 @@
 #include <simple2d.h>
 #include "GameEngine.hpp"
 
-class Interaction
-{
+class Interaction {
 public:
     Interaction(GameEngine gameEngineGiven);
     ~Interaction();
@@ -15,18 +14,24 @@ public:
 
 private:
     S2D_Window *window;
-    void onMouse(S2D_Event e);
-    void render();
-    void drawField(int i, int j, int lineWidth, int squareSize);
-    void drawPossibleArmy(int i, int j);
     GameEngine gameEngine;
-    bool checkFirstClick(std::pair<int, int> position);
-    bool checkSecondClick(std::pair<int, int> position);
     bool alreadyClicked{false};
-    std::pair<int, int> getIndexByMousePosition(std::pair<int, int> position);
+
     const int SQUARESIZE{50};
     const int NUMBEROFSQUARE{11};
     const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
+
+    void onMouse(S2D_Event e);
+    void render();
+    void drawField(int i, int j, int lineWidth, int squareSize);
+    void drawPossibleArmy(int i, int j, int squareSize, int lineWidth);
+    void setSelectedSquare(int i, int j, bool isSelected);
+    void setColorSquareByPlayer(int i, int j, int idPlayer);
+    void moveSquare(std::pair<int, int> oldIndexes, std::pair<int, int> newIndexes);
+    bool checkFirstClick(std::pair<int, int> position);
+    bool checkSecondClick(std::pair<int, int> position);
+    std::pair<int, int> getIndexByMousePosition(std::pair<int, int> position);
+
 };
 
 #endif
