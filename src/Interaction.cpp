@@ -46,14 +46,14 @@ bool Interaction::checkFirstClick(std::pair<int, int> position)
     if (position.first > GRIDSIZE || position.second > GRIDSIZE){ // Positions ?
         return false;
     }
-    std::cout << "MDRRR\n";
+
     std::pair<int, int> indexes = getIndexByMousePosition(position);
-    std::cout << indexes.first << " " << indexes.second << std::endl;
-    if (not (gameEngine.armyPresent(indexes))) // Army ?
+    std::pair<int, int> res = gameEngine.getPossibleArmy(indexes.first, indexes.second);
+    if (res.first != gameEngine.getCurrentIdPlayer()) // Army ?
     {
         return false;
     }
-    std::cout << "MDRRR\n";
+
     return true;
 }
 
@@ -88,9 +88,9 @@ void Interaction::onMouse(S2D_Event e)
         }else{
             if (checkFirstClick(position))
             {
-                std::cout << "CHECKED\n";
                 gameEngine.setSelectedSquare(position);
-                gameEngine.getSquare(position.first,position.second).setA(0.5);
+                gameEngine.getSquare(position.first,position.second).setA(0);
+                std::cout << "CHECKED\n";
                 alreadyClicked = true;
             }
         }
@@ -98,7 +98,6 @@ void Interaction::onMouse(S2D_Event e)
 
         case S2D_MOUSE_UP:
             // Mouse button was released
-            std::cout << "up" << e.x << std::endl;
             // Use `e.button` to see what button was clicked
             // Check `e.dblclick` to see if was a double click
             break;

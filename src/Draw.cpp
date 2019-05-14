@@ -82,10 +82,20 @@ void Draw::army(int i, int j, int squareSize, int lineWidth, int idPLayer){
     switch (idPLayer)
     {
     case 1:
+    /*std::pair <int,int>(i,j) indexes;
+    auto hovered = gameEngine.getHoverSquare()
+    if(hovered = indexes){
+    S2D_DrawQuad(x1, y1, 1, 0, 0, 0.5,
+                 x2, y2, 1, 0, 0, 0.5,
+                 x3, y3, 1, 0, 0, 0.5,
+                 x4, y4, 1, 0, 0, 0.5);
+    }else{
+        */
         S2D_DrawQuad(x1, y1, 1, 0, 0, 1,
                      x2, y2, 1, 0, 0, 1,
                      x3, y3, 1, 0, 0, 1,
                      x4, y4, 1, 0, 0, 1);
+    //}
         break;
 
     case 2:

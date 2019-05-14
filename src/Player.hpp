@@ -15,6 +15,10 @@ public:
 
 private:
     int id;
+    float r;
+    float g;
+    float b;
+    float a;
     std::map<std::pair<int, int>, int> army;
 };
 

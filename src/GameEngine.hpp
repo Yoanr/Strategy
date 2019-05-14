@@ -18,6 +18,7 @@ public:
     void resetSelectedSquare();
     bool armyPresent(std::pair<int, int>);
     void switchCurrentPlayer();
+    int getCurrentIdPlayer();
     int getCurrentRound();
 
 private:

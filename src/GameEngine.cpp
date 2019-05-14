@@ -52,6 +52,10 @@ Square& GameEngine::getSquare(int i, int j){
     return it->second;
 }
 
+int GameEngine::getCurrentIdPlayer(){
+    return currentPlayer.getId();
+}
+
 void GameEngine::round(Player player, const std::pair<int, int> SPAWN)
 {
     player.addArmy(SPAWN,1);
@@ -70,7 +74,6 @@ void GameEngine::idle(){
 bool GameEngine::armyPresent(std::pair<int, int> indexes)
 {
     bool b = currentPlayer.isArmy(indexes);
-    std::cout << "armypresent" << b << " " << indexes.first << " " << indexes.second << std::endl;
     return b;
 }
 
