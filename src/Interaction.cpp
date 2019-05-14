@@ -17,7 +17,7 @@ void Interaction::render()
         for (int j = 0; j < NUMBEROFSQUARE; j++)
         {
             drawField(i, j, SQUARESIZE, lineWidth);
-            drawPossibleArmy(i, j, SQUARESIZE, lineWidth);
+            drawPossibleArmy(i, j);
         }
     }
 }
@@ -28,12 +28,19 @@ void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
     Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j));
 }
 
-void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth)
-{
-    std::pair<int,int> p = gameEngine.getPossibleArmy(i,j); // <,>
-    if(p.second != 0){
-        Draw::army(i, j, squareSize, lineWidth, p.first);
-        Draw::armyPower(i, j, squareSize, lineWidth, p.second);
+void Interaction::drawPossibleArmy(int i, int j) {
+    std::pair<int, int> p = gameEngine.getPossibleArmy(i, j); // <,>
+
+    if (p.second != 0) {
+        switch (p.first) {
+            case 1:
+                gameEngine.getSquare(i, j).setColor(1, 0, 0);
+                break;
+
+            case 2:
+                gameEngine.getSquare(i, j).setColor(0, 0, 1);
+                break;
+        }
     }
 }
 
@@ -77,20 +84,19 @@ void Interaction::onMouse(S2D_Event e)
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
-        if(alreadyClicked){
+            if(alreadyClicked){
 
-            if(checkSecondClick(position)){
-                gameEngine.resetSelectedSquare();
-                alreadyClicked = false;
-                gameEngine.switchCurrentPlayer();
-            }
+                if(checkSecondClick(position)){
+                    gameEngine.resetSelectedSquare();
+                    alreadyClicked = false;
+                    gameEngine.switchCurrentPlayer();
+                }
 
         }else{
             if (checkFirstClick(position))
             {
                 gameEngine.setSelectedSquare(position);
                 gameEngine.getSquare(position.first,position.second).setA(0);
-                std::cout << "CHECKED\n";
                 alreadyClicked = true;
             }
         }
@@ -124,8 +130,8 @@ void Interaction::init()
     window = windowGiven;
 
     window->on_mouse = Lambda::make_function_ptr([this](S2D_Event event) { onMouse(event); });
-    window->render = Lambda::make_function_ptr([this]() { render(); });   
-        
+    window->render = Lambda::make_function_ptr([this]() { render(); });
+
     S2D_Show(window);
 }
 

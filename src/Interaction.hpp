@@ -18,7 +18,7 @@ private:
     void onMouse(S2D_Event e);
     void render();
     void drawField(int i, int j, int lineWidth, int squareSize);
-    void drawPossibleArmy(int i, int j, int lineWidth, int squareSize);
+    void drawPossibleArmy(int i, int j);
     GameEngine gameEngine;
     bool checkFirstClick(std::pair<int, int> position);
     bool checkSecondClick(std::pair<int, int> position);

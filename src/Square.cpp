@@ -4,17 +4,17 @@ Square::Square(Type typeGiven) : t(typeGiven)
 {
     switch (typeGiven)
     {
-    case Square::Type::tower:
-    r = 0;
-    g = 1;
-    b = 0;
-    a = 1;
-    break;
-    default:
-        r = 1;
-        g = 1;
-        b = 1;
-        a = 1;
+        case Square::Type::tower:
+            r = 0;
+            g = 1;
+            b = 0;
+            a = 1;
+            break;
+        default:
+            r = 1;
+            g = 1;
+            b = 1;
+            a = 1;
     }
 }
 
@@ -44,7 +44,14 @@ void Square::setB(float bGiven)
 }
 void Square::setA(float aGiven){
     a = aGiven;
-    }
+}
+
+void Square::setColor(float rGiven, float gGiven, float bGiven){
+    r=rGiven;
+    g=gGiven;
+    b=bGiven;
+}
+
 
 Square::~Square()
 {

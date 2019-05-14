@@ -25,6 +25,7 @@ public:
     void setG(float g);
     void setB(float b);
     void setA(float a);
+    void setColor(float r, float g, float b);
 
 private:
     float r;
