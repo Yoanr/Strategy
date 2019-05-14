@@ -25,7 +25,7 @@ void Interaction::render()
 void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
 {
     Draw::D2Lines(i, j, lineWidth, squareSize, 0, 0, 0); //Black color
-    Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j).getType());
+    Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j));
 }
 
 void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth)
@@ -46,11 +46,14 @@ bool Interaction::checkFirstClick(std::pair<int, int> position)
     if (position.first > GRIDSIZE || position.second > GRIDSIZE){ // Positions ?
         return false;
     }
+    std::cout << "MDRRR\n";
     std::pair<int, int> indexes = getIndexByMousePosition(position);
+    std::cout << indexes.first << " " << indexes.second << std::endl;
     if (not (gameEngine.armyPresent(indexes))) // Army ?
     {
         return false;
     }
+    std::cout << "MDRRR\n";
     return true;
 }
 
@@ -85,7 +88,9 @@ void Interaction::onMouse(S2D_Event e)
         }else{
             if (checkFirstClick(position))
             {
+                std::cout << "CHECKED\n";
                 gameEngine.setSelectedSquare(position);
+                gameEngine.getSquare(position.first,position.second).setA(0.5);
                 alreadyClicked = true;
             }
         }

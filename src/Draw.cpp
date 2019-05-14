@@ -38,7 +38,7 @@ void Draw::D2Lines(int i, int j, int lineWidth, int squareSize, float r, float g
     //drawLine(l1x, l3y, l1x, l1y, lineWidth, r, g, b);
 }
 
-void Draw::square(int i, int j, int squareSize, int lineWidth, Square::Type squareType)
+void Draw::square(int i, int j, int squareSize, int lineWidth, Square square)
 {
     int x1 = i * squareSize + lineWidth;
     int y1 = j * squareSize + lineWidth;
@@ -49,38 +49,24 @@ void Draw::square(int i, int j, int squareSize, int lineWidth, Square::Type squa
     int x4 = x1 + lineWidth;
     int y4 = y3 - lineWidth;
 
-    switch (squareType)
+    S2D_DrawQuad(x1, y1, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x2, y2, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x3, y3, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x4, y4, square.getR(), square.getG(), square.getB(), square.getA());
+
+    switch (square.getType())
     {
-    case Square::Type::tower:
-        S2D_DrawQuad(x1, y1, 0, 1, 0, 1,
-                     x2, y2, 0, 1, 0, 1,
-                     x3, y3, 0, 1, 0, 1,
-                     x4, y4, 0, 1, 0, 1);
-        break;
 
     case Square::Type::spawn1:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
-
         D4Lines(i, j, lineWidth, squareSize, 1, 0, 0);
         break;
 
     case Square::Type::spawn2:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
-
         D4Lines(i, j, lineWidth, squareSize, 0, 0, 1);
         break;
 
     default:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
+        break;
     }
 }
 void Draw::army(int i, int j, int squareSize, int lineWidth, int idPLayer){

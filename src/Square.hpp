@@ -16,12 +16,21 @@ public:
     Square(Type t);
     ~Square();
     Type getType();
+    float getR();
+    float getG();
+    float getB();
+    float getA();
+
+    void setR(float r);
+    void setG(float g);
+    void setB(float b);
+    void setA(float a);
 
 private:
-    int r;
-    int g;
-    int b;
-    int a;
+    float r;
+    float g;
+    float b;
+    float a;
     Type t;
 };
 

@@ -18,6 +18,7 @@ public:
     void resetSelectedSquare();
     bool armyPresent(std::pair<int, int>);
     void switchCurrentPlayer();
+    int getCurrentRound();
 
 private:
     int generateNumber0into100();
@@ -37,6 +38,7 @@ private:
     Player player1{1};
     Player player2{2};
     Player currentPlayer{player1};
+    int currentRound{1};
 };
 
 #endif
