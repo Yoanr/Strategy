@@ -1,6 +1,8 @@
 #ifndef SQUARE_H
 #define SQUARE_H
 
+#include "color.hpp"
+
 
 class Square
 {
@@ -25,7 +27,7 @@ public:
     void setG(float g);
     void setB(float b);
     void setA(float a);
-    void setColor(float r, float g, float b);
+    void setColor(color::Color color);
 
 private:
     float r;

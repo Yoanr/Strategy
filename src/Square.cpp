@@ -46,10 +46,10 @@ void Square::setA(float aGiven){
     a = aGiven;
 }
 
-void Square::setColor(float rGiven, float gGiven, float bGiven){
-    r=rGiven;
-    g=gGiven;
-    b=bGiven;
+void Square::setColor(color::Color color){
+    r=color.r;
+    g=color.g;
+    b=color.b;
 }
 
 

@@ -3,15 +3,15 @@
 #include "Lambda.hpp"
 #include "GameEngine.hpp"
 #include "Draw.hpp"
-
+#include "Config.hpp"
 
 
 
 void Interaction::render()
 {
-    for (int i = 0; i < NUMBEROFSQUARE; i++)
+    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
     {
-        for (int j = 0; j < NUMBEROFSQUARE; j++)
+        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
         {
             drawField(pair<int,int>(i,j));
             drawPossibleArmy(pair<int, int>(i,j));
@@ -21,8 +21,8 @@ void Interaction::render()
 
 void Interaction::drawField(pair<int, int> position)
 {
-    Draw::D2Lines(position, LINEWIDTH, SQUARESIZE, color::Color{0,0,0,0}); //Black color
-    Draw::square(position, SQUARESIZE, LINEWIDTH, gameEngine.getSquare(position));
+    Draw::D2Lines(position, color::black); //Black color
+    Draw::square(position, gameEngine.getSquare(position));
 }
 
 void Interaction::drawPossibleArmy(pair<int, int> position)
@@ -31,7 +31,7 @@ void Interaction::drawPossibleArmy(pair<int, int> position)
 
     if (p.second != 0) {
         setColorSquareByPlayer(position, p.first);
-        Draw::armyPower(position, SQUARESIZE, LINEWIDTH, p.second);
+        Draw::armyPower(position, p.second);
     }
 }
 
@@ -39,22 +39,23 @@ void Interaction::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
 {
     switch (idPlayer) {
         case 1:
-            gameEngine.getSquare(position).setColor(1, 0, 0);
+            gameEngine.getSquare(position).setColor(color::red);
             break;
 
         case 2:
-            gameEngine.getSquare(position).setColor(0, 0, 1);
+            gameEngine.getSquare(position).setColor(color::blue);
             break;
     }
 }
 
 pair<int, int> Interaction::getIndexByMousePosition(pair<int,int> position){
-    return pair<int,int>(position.first/SQUARESIZE,position.second/SQUARESIZE);
+    return pair<int, int>(position.first / Config::SQUARESIZE, position.second / Config::SQUARESIZE);
 }
 
 bool Interaction::checkFirstClick(pair<int, int> position)
 {
-    if (position.first > GRIDSIZE || position.second > GRIDSIZE){ // Positions ?
+    if (position.first > Config::GRIDSIZE || position.second > Config::GRIDSIZE)
+    { // Positions ?
         return false;
     }
 
@@ -70,7 +71,7 @@ bool Interaction::checkFirstClick(pair<int, int> position)
 
 bool Interaction::checkSecondClick(pair<int,int>  position)
 {
-    if (position.first > GRIDSIZE || position.second > GRIDSIZE)
+    if (position.first > Config::GRIDSIZE || position.second > Config::GRIDSIZE)
     { // Positions ?
         return false;
     }
@@ -97,7 +98,7 @@ void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
 
 //TODO Not finished
 void Interaction::moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes){
-    gameEngine.getSquare(oldIndexes).setColor(0, 1, 0); //not working
+    gameEngine.getSquare(oldIndexes).setColor(color::green); //not working
 
     setColorSquareByPlayer(newIndexes, gameEngine.getCurrentIdPlayer());
 }

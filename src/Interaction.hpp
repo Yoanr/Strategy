@@ -19,11 +19,6 @@ private:
     GameEngine gameEngine;
     bool alreadyClicked{false};
 
-    const int SQUARESIZE{50};
-    const int NUMBEROFSQUARE{11};
-    const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
-    const int LINEWIDTH{2};
-
     void onMouse(S2D_Event e);
     void render();
     void drawField(pair<int, int> position);

@@ -1,53 +1,54 @@
 #include "Draw.hpp"
 #include "simple2d.h"
 #include <iostream>
+#include "Config.hpp"
 
-void Draw::line(int l1x, int l1y, int l2x, int l2y, int lineWidth, color::Color color)
+void Draw::line(int l1x, int l1y, int l2x, int l2y, color::Color color)
 {
     S2D_DrawLine(l1x, l1y, l2x, l2y,
-                 lineWidth,
-                 color.r, color.g, color.b, 1,
-                 color.r, color.g, color.b, 1,
-                 color.r, color.g, color.b, 1,
-                 color.r, color.g, color.b, 1);
+                 Config::LINEWIDTH,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a);
 }
 
-void Draw::D4Lines(pair<int, int> position, int lineWidth, int squareSize, color::Color color)
+void Draw::D4Lines(pair<int, int> position, color::Color color)
 {
-    int l1x = position.first * squareSize;
-    int l1y = position.second * squareSize;
-    int l2x = l1x + squareSize;
-    int l3y = l1y + squareSize;
+    int l1x = position.first * Config::SQUARESIZE;
+    int l1y = position.second * Config::SQUARESIZE;
+    int l2x = l1x + Config::SQUARESIZE;
+    int l3y = l1y + Config::SQUARESIZE;
 
-    line(l1x, l1y, l2x, l1y, lineWidth, color);
-    line(l2x, l1y, l2x, l3y, lineWidth, color);
-    line(l2x, l3y, l1x, l3y, lineWidth, color);
-    line(l1x, l3y, l1x, l1y, lineWidth, color);
+    line(l1x, l1y, l2x, l1y, color);
+    line(l2x, l1y, l2x, l3y, color);
+    line(l2x, l3y, l1x, l3y, color);
+    line(l1x, l3y, l1x, l1y, color);
 }
 
-void Draw::D2Lines(pair<int, int> position, int lineWidth, int squareSize, color::Color color)
+void Draw::D2Lines(pair<int, int> position, color::Color color)
 {
-    int l1x = position.first * squareSize;
-    int l1y = position.second * squareSize;
-    int l2x = l1x + squareSize;
-    int l3y = l1y + squareSize;
+    int l1x = position.first * Config::SQUARESIZE;
+    int l1y = position.second * Config::SQUARESIZE;
+    int l2x = l1x + Config::SQUARESIZE;
+    int l3y = l1y + Config::SQUARESIZE;
 
     //drawLine(l1x, l1y, l2x, l1y, lineWidth, r, g, b);
-    line(l2x, l1y, l2x, l3y, lineWidth, color);
-    line(l2x, l3y, l1x, l3y, lineWidth, color);
+    line(l2x, l1y, l2x, l3y, color);
+    line(l2x, l3y, l1x, l3y, color);
     //drawLine(l1x, l3y, l1x, l1y, lineWidth, r, g, b);
 }
 
-void Draw::square(pair<int, int> position, int squareSize, int lineWidth, Square square)
+void Draw::square(pair<int, int> position, Square square)
 {
-    int x1 = position.first * squareSize + lineWidth;
-    int y1 = position.second * squareSize + lineWidth;
-    int x2 = x1 + squareSize - lineWidth;
-    int y2 = y1 + lineWidth;
-    int x3 = x2 - lineWidth;
-    int y3 = y2 + squareSize - lineWidth;
-    int x4 = x1 + lineWidth;
-    int y4 = y3 - lineWidth;
+    int x1 = position.first * Config::SQUARESIZE + Config::LINEWIDTH;
+    int y1 = position.second * Config::SQUARESIZE + Config::LINEWIDTH;
+    int x2 = x1 + Config::SQUARESIZE - Config::LINEWIDTH;
+    int y2 = y1 + Config::LINEWIDTH;
+    int x3 = x2 - Config::LINEWIDTH;
+    int y3 = y2 + Config::SQUARESIZE - Config::LINEWIDTH;
+    int x4 = x1 + Config::LINEWIDTH;
+    int y4 = y3 - Config::LINEWIDTH;
 
     S2D_DrawQuad(x1, y1, square.getR(), square.getG(), square.getB(), square.getA(),
                  x2, y2, square.getR(), square.getG(), square.getB(), square.getA(),
@@ -58,11 +59,11 @@ void Draw::square(pair<int, int> position, int squareSize, int lineWidth, Square
     {
 
         case Square::Type::spawn1:
-            D4Lines(position, lineWidth, squareSize, color::Color{1,0,0,1});
+            D4Lines(position, color::red);
             break;
 
         case Square::Type::spawn2:
-            D4Lines(position, lineWidth, squareSize, color::Color{0, 0, 1, 1});
+            D4Lines(position, color::blue);
             break;
 
         default:
@@ -70,7 +71,7 @@ void Draw::square(pair<int, int> position, int squareSize, int lineWidth, Square
     }
 }
 
-void Draw::armyPower(pair<int, int> position, int squareSize, int lineWidth, int armyPower)
+void Draw::armyPower(pair<int, int> position, int armyPower)
 {
     std::string armyPowerStr = std::to_string(armyPower);
     int txtSize = 0;
@@ -87,8 +88,8 @@ void Draw::armyPower(pair<int, int> position, int squareSize, int lineWidth, int
         txt->color.g = 1;
         txt->color.b = 1;
         txt->color.a = 1;
-        txt->x = position.first * squareSize - (lineWidth) + txtSize/2;
-        txt->y = position.second * squareSize - (lineWidth) + txtSize/3;
+        txt->x = position.first * Config::SQUARESIZE - (Config::LINEWIDTH) + txtSize / 2;
+        txt->y = position.second * Config::SQUARESIZE - (Config::LINEWIDTH) + txtSize / 3;
         S2D_DrawText(txt);
     }
     else
