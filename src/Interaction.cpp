@@ -10,57 +10,57 @@
 void Interaction::render()
 {
     //Draw::buttons();
-    int lineWidth = 2;
-
     for (int i = 0; i < NUMBEROFSQUARE; i++)
     {
         for (int j = 0; j < NUMBEROFSQUARE; j++)
         {
-            drawField(i, j, SQUARESIZE, lineWidth);
-            drawPossibleArmy(i, j, SQUARESIZE, lineWidth);
+            drawField(pair<int,int>(i,j));
+            drawPossibleArmy(pair<int, int>(i,j));
         }
     }
 }
 
-void Interaction::drawField(int i, int j, int squareSize, int lineWidth)
+void Interaction::drawField(pair<int, int> position)
 {
-    Draw::D2Lines(i, j, lineWidth, squareSize, 0, 0, 0); //Black color
-    Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j));
+    Draw::D2Lines(position.first, position.second, LINEWIDTH, SQUARESIZE, 0, 0, 0); //Black color
+    Draw::square(position.first, position.second, SQUARESIZE, LINEWIDTH, gameEngine.getSquare(position));
 }
 
-void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth) {
-    std::pair<int, int> p = gameEngine.getPossibleArmy(i, j); // <,>
+void Interaction::drawPossibleArmy(pair<int, int> position)
+{
+    pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
 
     if (p.second != 0) {
-        setColorSquareByPlayer(i, j, p.first);
-        Draw::armyPower(i, j, squareSize, lineWidth, p.second);
+        setColorSquareByPlayer(position, p.first);
+        Draw::armyPower(position.first, position.second, SQUARESIZE, LINEWIDTH, p.second);
     }
 }
 
-void Interaction::setColorSquareByPlayer(int i, int j, int idPlayer){
+void Interaction::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
+{
     switch (idPlayer) {
         case 1:
-            gameEngine.getSquare(i, j).setColor(1, 0, 0);
+            gameEngine.getSquare(position).setColor(1, 0, 0);
             break;
 
         case 2:
-            gameEngine.getSquare(i, j).setColor(0, 0, 1);
+            gameEngine.getSquare(position).setColor(0, 0, 1);
             break;
     }
 }
 
-std::pair<int, int> Interaction::getIndexByMousePosition(std::pair<int,int> position){
-    return std::pair<int,int>(position.first/SQUARESIZE,position.second/SQUARESIZE);
+pair<int, int> Interaction::getIndexByMousePosition(pair<int,int> position){
+    return pair<int,int>(position.first/SQUARESIZE,position.second/SQUARESIZE);
 }
 
-bool Interaction::checkFirstClick(std::pair<int, int> position)
+bool Interaction::checkFirstClick(pair<int, int> position)
 {
     if (position.first > GRIDSIZE || position.second > GRIDSIZE){ // Positions ?
         return false;
     }
 
-    std::pair<int, int> indexes = getIndexByMousePosition(position);
-    std::pair<int, int> res = gameEngine.getPossibleArmy(indexes.first, indexes.second);
+    pair<int, int> indexes = getIndexByMousePosition(position);
+    pair<int, int> res = gameEngine.getPossibleArmy(indexes);
     if (res.first != gameEngine.getCurrentIdPlayer()) // Army ?
     {
         return false;
@@ -69,14 +69,14 @@ bool Interaction::checkFirstClick(std::pair<int, int> position)
     return true;
 }
 
-bool Interaction::checkSecondClick(std::pair<int,int>  position)
+bool Interaction::checkSecondClick(pair<int,int>  position)
 {
     if (position.first > GRIDSIZE || position.second > GRIDSIZE)
     { // Positions ?
         return false;
     }
-    std::pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
-    std::pair<int, int> newIndexes = getIndexByMousePosition(position);
+    pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+    pair<int, int> newIndexes = getIndexByMousePosition(position);
     if (oldIndexes == newIndexes) // Army ?
     {
         return false;
@@ -91,31 +91,32 @@ bool Interaction::checkSecondClick(std::pair<int,int>  position)
     return true;
 }
 
-void Interaction::setSelectedSquare(int i, int j, bool isSelected){
-    gameEngine.getSquare(i, j).setA(isSelected ? 0.8 : 1);
+void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
+{
+    gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
 }
 
 //TODO Not finished
-void Interaction::moveSquare(std::pair<int, int> oldIndexes, std::pair<int, int> newIndexes){
-    gameEngine.getSquare(oldIndexes.first, oldIndexes.second).setColor(0, 1, 0); //not working
+void Interaction::moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes){
+    gameEngine.getSquare(oldIndexes).setColor(0, 1, 0); //not working
 
-    setColorSquareByPlayer(newIndexes.first, newIndexes.second, gameEngine.getCurrentIdPlayer());
+    setColorSquareByPlayer(newIndexes, gameEngine.getCurrentIdPlayer());
 }
 
 void Interaction::onMouse(S2D_Event e)
 {
-    std::pair<int,int> position(e.x, e.y);
+    pair<int,int> position(e.x, e.y);
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
             if(alreadyClicked){
 
                 if(checkSecondClick(position)){
-                    std::pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
-                    std::pair<int, int> newIndexes = getIndexByMousePosition(position);
+                    pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+                    pair<int, int> newIndexes = getIndexByMousePosition(position);
 
                     gameEngine.resetSelectedSquare();
-                    setSelectedSquare(oldIndexes.first, oldIndexes.second, false);
+                    setSelectedSquare(oldIndexes, false);
 
                     alreadyClicked = false;
 
@@ -128,7 +129,7 @@ void Interaction::onMouse(S2D_Event e)
                 if (checkFirstClick(position))
                 {
                     gameEngine.setSelectedSquare(position);
-                    setSelectedSquare(getIndexByMousePosition(position).first, getIndexByMousePosition(position).second, true);
+                    setSelectedSquare(getIndexByMousePosition(position), true);
 
                     alreadyClicked = true;
                 }
