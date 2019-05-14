@@ -10,7 +10,7 @@ int main()
    interaction.init();
    interaction.start();
 
-   gameEngine.idle();
+   //gameEngine.idle();
 
     return 0;
 }

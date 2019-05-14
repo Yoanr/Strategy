@@ -5,10 +5,6 @@ int GameEngine::generateNumber0into100(){
     return rand() % 100 + 0;
 }
 GameEngine::GameEngine(){
-    player1.addArmy(std::pair<int, int>(3, 3), 5);
-    player1.addArmy(std::pair<int, int>(7, 7), 4);
-    player2.addArmy(std::pair<int, int>(9, 9), 10);
-
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
@@ -54,20 +50,47 @@ Square& GameEngine::getSquare(int i, int j){
     return it->second;
 }
 
-/*void GameEngine::round(Player player, const std::pair<int, int> SPAWN)
+void GameEngine::round(Player player, const std::pair<int, int> SPAWN)
 {
-    //player.addArmy(SPAWN,1);
-    //
-}*/
+    player.addArmy(SPAWN,1);
+}
 
 void GameEngine::idle(){
-   // for(;;){
+   for(;;){
 
-       //round(player1,SPAWNP1);
-       //round(player2, SPAWNP2);
+       round(player1,SPAWNP1);
+       round(player2, SPAWNP2);
 
        numberOfRound++;
-   // }
+   }
+}
+
+bool GameEngine::armyPresent(std::pair<int, int> indexes)
+{
+    return currentPlayer.isArmy(indexes);
+}
+
+void GameEngine::setSelectedSquare(std::pair<int, int> indexes)
+{
+    selectedSquareIndexes = indexes;
+}
+
+void GameEngine::resetSelectedSquare()
+{
+    selectedSquareIndexes = std::pair<int,int>(-1,-1);
+}
+
+void GameEngine::switchCurrentPlayer(){
+    if(currentPlayer.getId() == 1){
+        currentPlayer = player2;
+    }else {
+        currentPlayer = player1;
+    }
+}
+
+std::pair<int, int> GameEngine::getSelectedSquare()
+{
+    return selectedSquareIndexes;
 }
 
 GameEngine::~GameEngine()

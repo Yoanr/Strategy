@@ -13,6 +13,11 @@ public:
     void idle();
     std::pair<int,int> getPossibleArmy(int i,int j);
     Square& getSquare(int i,int j);
+    void setSelectedSquare(std::pair<int, int>);
+    std::pair<int,int> getSelectedSquare();
+    void resetSelectedSquare();
+    bool armyPresent(std::pair<int, int>);
+    void switchCurrentPlayer();
 
 private:
     int generateNumber0into100();
@@ -27,9 +32,11 @@ private:
     const std::pair<int, int> TOWER3{9, 5};
 
     int numberOfRound{0};
-   // void round(Player player, const std::pair<int, int> SPAWN);
+    void round(Player player, const std::pair<int, int> SPAWN);
+    std::pair<int, int> selectedSquareIndexes{-1, -1};
     Player player1{1};
     Player player2{2};
+    Player currentPlayer{player1};
 };
 
 #endif

@@ -10,16 +10,14 @@
 void Interaction::render()
 {
     //Draw::buttons();
-    int gridSize = 11;
     int lineWidth = 2;
-    int squareSize = 50;
 
-    for (int i = 0; i <  gridSize; i++)
+    for (int i = 0; i < NUMBEROFSQUARE; i++)
     {
-        for (int j = 0; j <  gridSize; j++)
+        for (int j = 0; j < NUMBEROFSQUARE; j++)
         {
-            drawField(i, j, squareSize, lineWidth);
-            drawPossibleArmy(i, j, squareSize,lineWidth);
+            drawField(i, j, SQUARESIZE, lineWidth);
+            drawPossibleArmy(i, j, SQUARESIZE, lineWidth);
         }
     }
 }
@@ -39,16 +37,58 @@ void Interaction::drawPossibleArmy(int i, int j, int squareSize, int lineWidth)
     }
 }
 
+std::pair<int, int> Interaction::getIndexByMousePosition(std::pair<int,int> position){
+    return std::pair<int,int>(position.first/SQUARESIZE,position.second/SQUARESIZE);
+}
+
+bool Interaction::checkFirstClick(std::pair<int, int> position)
+{
+    if (position.first > GRIDSIZE || position.second > GRIDSIZE){ // Positions ?
+        return false;
+    }
+    std::pair<int, int> indexes = getIndexByMousePosition(position);
+    if (not (gameEngine.armyPresent(indexes))) // Army ?
+    {
+        return false;
+    }
+    return true;
+}
+
+bool Interaction::checkSecondClick(std::pair<int,int>  position)
+{
+    if (position.first > GRIDSIZE || position.second > GRIDSIZE)
+    { // Positions ?
+        return false;
+    }
+    std::pair<int, int> indexes = getIndexByMousePosition(position);
+    if (gameEngine.getSelectedSquare() == indexes) // Army ?
+    {
+        return false;
+    }
+    return true;
+}
 
 void Interaction::onMouse(S2D_Event e)
 {
+    std::pair<int,int> position(e.x, e.y);
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
-            // Mouse button was pressed
-            std::cout << "down" << e.x << std::endl;
-            // Use `e.button` to see what button was clicked
-            // Check `e.dblclick` to see if was a double click
+        if(alreadyClicked){
+
+            if(checkSecondClick(position)){
+                gameEngine.resetSelectedSquare();
+                alreadyClicked = false;
+                gameEngine.switchCurrentPlayer();
+            }
+
+        }else{
+            if (checkFirstClick(position))
+            {
+                gameEngine.setSelectedSquare(position);
+                alreadyClicked = true;
+            }
+        }
             break;
 
         case S2D_MOUSE_UP:

@@ -20,6 +20,13 @@ private:
     void drawField(int i, int j, int lineWidth, int squareSize);
     void drawPossibleArmy(int i, int j, int lineWidth, int squareSize);
     GameEngine gameEngine;
+    bool checkFirstClick(std::pair<int, int> position);
+    bool checkSecondClick(std::pair<int, int> position);
+    bool alreadyClicked{false};
+    std::pair<int, int> getIndexByMousePosition(std::pair<int, int> position);
+    const int SQUARESIZE{50};
+    const int NUMBEROFSQUARE{11};
+    const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
 };
 
 #endif
