@@ -102,10 +102,8 @@ void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
     gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
 }
 
-//TODO Not finished
 void Interaction::moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes){
-    gameEngine.getSquare(oldIndexes).setColor(color::green); //not working
-
+    gameEngine.getSquare(oldIndexes).setColor(color::white);
     setColorSquareByPlayer(newIndexes, gameEngine.getCurrentIdPlayer());
 }
 
@@ -122,13 +120,16 @@ void Interaction::onMouse(S2D_Event e)
                     pair<int, int> newIndexes = getIndexByMousePosition(position);
 
                     gameEngine.resetSelectedSquare();
+
                     setSelectedSquare(oldIndexes, false);
 
                     alreadyClicked = false;
 
                     moveSquare(oldIndexes, newIndexes); //TODO not always a move action
 
-                    gameEngine.switchCurrentPlayer();
+                    gameEngine.movePlayerArmy(oldIndexes, newIndexes);
+
+                    gameEngine.switchCurrentPlayerId();
                 }
 
             }else{

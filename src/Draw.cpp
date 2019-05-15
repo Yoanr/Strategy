@@ -79,7 +79,7 @@ void Draw::square(Square square)
 
 void Draw::armyPower(int armyPower)
 {
-    std::string armyPowerStr = std::to_string(armyPower);
+    string armyPowerStr = to_string(armyPower);
     int txtSize = 0;
     if(armyPower > 9) {
         txtSize = 25;
@@ -100,7 +100,7 @@ void Draw::armyPower(int armyPower)
     }
     else
     {
-        std::cout << "fonts error" << std::endl;
+        cout << "fonts error" << endl;
     }
     S2D_FreeText(txt);
 }

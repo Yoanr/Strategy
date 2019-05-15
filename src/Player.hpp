@@ -3,15 +3,19 @@
 #include <iostream>
 #include <map>
 
+using namespace std;
+
 class Player
 {
 public:
     Player(int id);
     ~Player();
     int getId();
-    void addArmy(const std::pair<int, int> position, int powerArmy);
-    bool isArmy(const std::pair<int, int> position);
-    int getArmyPower(const std::pair<int, int> position);
+    void addArmy(const pair<int, int> position, int powerArmy);
+    void moveArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition);
+    bool isArmy(const pair<int, int> position);
+    int getArmyPower(const pair<int, int> position);
+    int getArmySize();
 
 private:
     int id;
@@ -19,7 +23,7 @@ private:
     float g;
     float b;
     float a;
-    std::map<std::pair<int, int>, int> army;
+    map<pair<int, int>, int> army;
 };
 
 #endif

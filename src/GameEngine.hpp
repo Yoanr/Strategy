@@ -11,14 +11,14 @@ class GameEngine
 public:
     GameEngine();
     ~GameEngine();
-    void idle();
     pair<int, int> getPossibleArmy(pair<int, int> position);
     Square &getSquare(pair<int, int> position);
     void setSelectedSquare(pair<int, int>);
     pair<int,int> getSelectedSquare();
     void resetSelectedSquare();
+    void movePlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
-    void switchCurrentPlayer();
+    void switchCurrentPlayerId();
     int getCurrentIdPlayer();
     int getCurrentRound();
 
@@ -35,11 +35,11 @@ private:
     const pair<int, int> TOWER3{9, 5};
 
     int numberOfRound{0};
-    void round(Player player, const pair<int, int> SPAWN);
     pair<int, int> selectedSquareIndexes{-1, -1};
     Player player1{1};
     Player player2{2};
-    Player currentPlayer{player1};
+    Player& getCurrentPlayer();
+    int currentPlayerId{1};
     int currentRound{1};
 };
 

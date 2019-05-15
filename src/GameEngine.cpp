@@ -34,7 +34,7 @@ GameEngine::GameEngine(){
 }
 
 pair<int, int> GameEngine::getPossibleArmy(pair<int, int> position)
-{    
+{
     if (player1.isArmy(position))
     {
         return pair<int, int>(1, player1.getArmyPower(position));
@@ -53,27 +53,12 @@ Square &GameEngine::getSquare(pair<int, int> position)
 }
 
 int GameEngine::getCurrentIdPlayer(){
-    return currentPlayer.getId();
-}
-
-void GameEngine::round(Player player, const pair<int, int> SPAWN)
-{
-    player.addArmy(SPAWN,1);
-}
-
-void GameEngine::idle(){
-   for(;;){
-
-       round(player1,SPAWNP1);
-       round(player2, SPAWNP2);
-
-       numberOfRound++;
-   }
+    return currentPlayerId;
 }
 
 bool GameEngine::armyPresent(pair<int, int> indexes)
 {
-    bool b = currentPlayer.isArmy(indexes);
+    bool b = getCurrentPlayer().isArmy(indexes);
     return b;
 }
 
@@ -87,13 +72,25 @@ void GameEngine::resetSelectedSquare()
     selectedSquareIndexes = pair<int,int>(-1,-1);
 }
 
-void GameEngine::switchCurrentPlayer(){
-    if(currentPlayer.getId() == 1){
-        currentPlayer = player2;
+void GameEngine::switchCurrentPlayerId(){
+    if(currentPlayerId == 1){
+        currentPlayerId = 2;
     }else {
-        currentPlayer = player1;
+        currentPlayerId = 1;
         currentRound++;
     }
+}
+
+Player& GameEngine::getCurrentPlayer(){
+    if (currentPlayerId == 1) {
+        return player1;
+    } else {
+        return player2;
+    }
+}
+
+void GameEngine::movePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
+    getCurrentPlayer().moveArmy(oldPosition, newPosition);
 }
 
 int GameEngine::getCurrentRound(){
