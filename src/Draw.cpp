@@ -3,6 +3,14 @@
 #include <iostream>
 #include "Config.hpp"
 
+
+Draw& Draw::getInstance(){
+    static Draw instance;
+    return instance;
+}
+void Draw::setPosition(pair<int,int> positionGiven){
+position = positionGiven;
+}
 void Draw::line(int l1x, int l1y, int l2x, int l2y, color::Color color)
 {
     S2D_DrawLine(l1x, l1y, l2x, l2y,
@@ -13,7 +21,7 @@ void Draw::line(int l1x, int l1y, int l2x, int l2y, color::Color color)
                  color.r, color.g, color.b, color.a);
 }
 
-void Draw::D4Lines(pair<int, int> position, color::Color color)
+void Draw::D4Lines(color::Color color)
 {
     int l1x = position.first * Config::SQUARESIZE;
     int l1y = position.second * Config::SQUARESIZE;
@@ -26,20 +34,18 @@ void Draw::D4Lines(pair<int, int> position, color::Color color)
     line(l1x, l3y, l1x, l1y, color);
 }
 
-void Draw::D2Lines(pair<int, int> position, color::Color color)
+void Draw::D2Lines(color::Color color)
 {
     int l1x = position.first * Config::SQUARESIZE;
     int l1y = position.second * Config::SQUARESIZE;
     int l2x = l1x + Config::SQUARESIZE;
     int l3y = l1y + Config::SQUARESIZE;
 
-    //drawLine(l1x, l1y, l2x, l1y, lineWidth, r, g, b);
     line(l2x, l1y, l2x, l3y, color);
     line(l2x, l3y, l1x, l3y, color);
-    //drawLine(l1x, l3y, l1x, l1y, lineWidth, r, g, b);
 }
 
-void Draw::square(pair<int, int> position, Square square)
+void Draw::square(Square square)
 {
     int x1 = position.first * Config::SQUARESIZE + Config::LINEWIDTH;
     int y1 = position.second * Config::SQUARESIZE + Config::LINEWIDTH;
@@ -59,11 +65,11 @@ void Draw::square(pair<int, int> position, Square square)
     {
 
         case Square::Type::spawn1:
-            D4Lines(position, color::red);
+            D4Lines(color::red);
             break;
 
         case Square::Type::spawn2:
-            D4Lines(position, color::blue);
+            D4Lines(color::blue);
             break;
 
         default:
@@ -71,7 +77,7 @@ void Draw::square(pair<int, int> position, Square square)
     }
 }
 
-void Draw::armyPower(pair<int, int> position, int armyPower)
+void Draw::armyPower(int armyPower)
 {
     std::string armyPowerStr = std::to_string(armyPower);
     int txtSize = 0;

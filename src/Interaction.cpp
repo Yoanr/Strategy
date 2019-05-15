@@ -13,25 +13,31 @@ void Interaction::render()
     {
         for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
         {
-            drawField(pair<int,int>(i,j));
-            drawPossibleArmy(pair<int, int>(i,j));
+            pair<int, int> position(i, j);
+            Draw::getInstance().setPosition(position);
+
+            drawField(position);
+            drawPossibleArmy(position);
         }
     }
 }
 
 void Interaction::drawField(pair<int, int> position)
 {
-    Draw::D2Lines(position, color::black); //Black color
-    Draw::square(position, gameEngine.getSquare(position));
+    Draw::getInstance().D2Lines(color::black); //Black color
+    Draw::getInstance().square(gameEngine.getSquare(position));
 }
 
 void Interaction::drawPossibleArmy(pair<int, int> position)
 {
     pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
+    int playerId = p.first;
+    int armyPower = p.second;
 
-    if (p.second != 0) {
-        setColorSquareByPlayer(position, p.first);
-        Draw::armyPower(position, p.second);
+    if (not (armyPower == 0))
+    {
+        setColorSquareByPlayer(position,playerId);
+        Draw::getInstance().armyPower(armyPower);
     }
 }
 
@@ -160,6 +166,7 @@ void Interaction::onMouse(S2D_Event e)
 
 void Interaction::init()
 {
+    Draw::getInstance();
     S2D_Window *windowGiven = S2D_CreateWindow(
             "Game", 1000, 700, nullptr, nullptr, 0);
     window = windowGiven;

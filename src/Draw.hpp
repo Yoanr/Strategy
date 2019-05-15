@@ -10,11 +10,23 @@ using namespace std;
 class Draw
 {
 public:
-    static void line(int l1x, int l1y, int l2x, int l2y, color::Color color);
-    static void D2Lines(pair<int,int> position, color::Color color);
-    static void D4Lines(pair<int, int> position, color::Color color);
-    static void square(pair<int, int> position, Square square);
-    static void armyPower(pair<int, int> position, int armyPower);
+    static Draw& getInstance();
+    void setPosition(pair<int, int> positionGiven);
+
+    void D2Lines(color::Color color);
+    void D4Lines(color::Color color);
+    void square(Square square);
+    void armyPower(int armyPower);
+
+
+private:
+    Draw() = default;
+    ~Draw() = default;
+    Draw(const Draw &) = delete;
+    Draw &operator=(const Draw &) = delete;
+
+    pair<int,int> position{-1,-1};
+    void line(int l1x, int l1y, int l2x, int l2y, color::Color color);
 };
 
 #endif
