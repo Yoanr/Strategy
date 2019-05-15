@@ -125,9 +125,16 @@ void Interaction::onMouse(S2D_Event e)
 
                     alreadyClicked = false;
 
-                    moveSquare(oldIndexes, newIndexes); //TODO not always a move action
+                    pair<int,int> p = gameEngine.getPossibleArmy(newIndexes);
 
-                    gameEngine.movePlayerArmy(oldIndexes, newIndexes);
+                    moveSquare(oldIndexes, newIndexes);
+                    if (p.first == gameEngine.getCurrentIdPlayer() || p.first == 0)
+                    {
+                        gameEngine.moveOrMergePlayerArmy(oldIndexes, newIndexes);
+                    }else{
+                        
+                        gameEngine.fightPlayerArmy(oldIndexes, newIndexes);
+                    }
 
                     gameEngine.switchCurrentPlayerId();
                 }

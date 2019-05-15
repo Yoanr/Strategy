@@ -27,12 +27,21 @@ void Player::addArmy(const pair<int, int> position, int powerArmy)
     }
 }
 
-void Player::moveArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition){
-    if(army.find(oldPosition) != army.end()) {
-        int armyPower = army[oldPosition];
-        army.erase(oldPosition);
-        addArmy(newPosition, armyPower);
+void Player::changeArmy(const pair<int, int> position, int powerArmy)
+{
+    if (isArmy(position))
+    {
+        army[position] =  powerArmy;
     }
+}
+
+void Player::moveArmy(const pair<int, int> newPosition, int armyPower)
+{
+    addArmy(newPosition, armyPower);
+}
+void Player::deleteArmy(const pair<int, int> position)
+{
+    army.erase(position);
 }
 
 int Player::getArmySize(){

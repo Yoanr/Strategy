@@ -5,8 +5,7 @@ int GameEngine::generateNumber0into100(){
     return rand() % 100 + 0;
 }
 GameEngine::GameEngine(){
-    player1.addArmy(pair<int,int>(1,1),1);
-    player2.addArmy(pair<int, int>(2, 2), 1);
+    player1.addArmy(SPAWNP1, 1);
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
@@ -75,8 +74,10 @@ void GameEngine::resetSelectedSquare()
 void GameEngine::switchCurrentPlayerId(){
     if(currentPlayerId == 1){
         currentPlayerId = 2;
+        player2.addArmy(SPAWNP2, 1);
     }else {
         currentPlayerId = 1;
+        player1.addArmy(SPAWNP1, 1);
         currentRound++;
     }
 }
@@ -89,8 +90,54 @@ Player& GameEngine::getCurrentPlayer(){
     }
 }
 
-void GameEngine::movePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
-    getCurrentPlayer().moveArmy(oldPosition, newPosition);
+Player& GameEngine::getEnnemyPlayer()
+{
+    if (currentPlayerId == 1)
+    {
+        return player2;
+    }
+    else
+    {
+        return player1;
+    }
+}
+
+void GameEngine::moveOrMergePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
+    int armyPower = getCurrentPlayer().getArmyPower(oldPosition);
+    getCurrentPlayer().deleteArmy(oldPosition);
+
+    getCurrentPlayer().addArmy(newPosition, armyPower);
+}
+#include <unistd.h>
+
+void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
+    
+    int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
+    getCurrentPlayer().deleteArmy(oldPosition);
+
+    int armyPowerEnnemyPlayer = getEnnemyPlayer().getArmyPower(newPosition);
+
+    while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
+        int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
+        sleep(1);
+        int rand = generateNumber0into100();
+        std::cout << "rand: " << rand << std::endl;
+        if ( rand < proportion * armyPowerCurrentPlayer){
+            armyPowerEnnemyPlayer--;
+            std::cout << "fight won current" << std::endl;
+        }else{
+            armyPowerCurrentPlayer--;
+            std::cout << "fight won ennemy" << std::endl;
+        }
+        std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
+    }
+    
+    if (armyPowerCurrentPlayer>0){
+        getCurrentPlayer().addArmy(newPosition, armyPowerCurrentPlayer);
+        getEnnemyPlayer().deleteArmy(newPosition);
+    }else{
+        getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
+    }
 }
 
 int GameEngine::getCurrentRound(){

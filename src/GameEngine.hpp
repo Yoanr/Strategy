@@ -16,7 +16,8 @@ public:
     void setSelectedSquare(pair<int, int>);
     pair<int,int> getSelectedSquare();
     void resetSelectedSquare();
-    void movePlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
+    void moveOrMergePlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
+    void fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
     void switchCurrentPlayerId();
     int getCurrentIdPlayer();
@@ -39,6 +40,7 @@ private:
     Player player1{1};
     Player player2{2};
     Player& getCurrentPlayer();
+    Player& getEnnemyPlayer();
     int currentPlayerId{1};
     int currentRound{1};
 };
