@@ -71,6 +71,12 @@ bool Interaction::checkSecondClick(pair<int,int>  position)
     }
     pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
     pair<int, int> newIndexes = getIndexByMousePosition(position);
+
+    if (gameEngine.isNotEnnemySpawn(newIndexes)) // Ennemy spawn ?
+    {
+        return false;
+    }
+
     if (oldIndexes == newIndexes) // Army ?
     {
         return false;

@@ -22,6 +22,7 @@ public:
     int getCurrentIdPlayer();
     int getEnnemyIdPlayer();
     int getCurrentRound();
+    bool isNotEnnemySpawn(pair<int, int> position);
 
     void play(pair<int, int> oldPosition, pair<int, int> newPosition);
     void setColorSquareByPlayer(pair<int, int> position, int idPlayer);

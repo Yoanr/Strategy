@@ -142,6 +142,14 @@ int GameEngine::getCurrentRound(){
     return currentRound;
 }
 
+bool GameEngine::isNotEnnemySpawn(pair<int, int> position){
+if(currentPlayerId == 1){
+    return  (SPAWNP2 == position);
+}else{
+    return (SPAWNP1 == position);
+}
+}
+
 void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
     resetSelectedSquare();
     getSquare(oldPosition).setA(1);
