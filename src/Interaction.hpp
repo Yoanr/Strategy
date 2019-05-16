@@ -24,8 +24,6 @@ private:
     void drawField(pair<int, int> position);
     void drawPossibleArmy(pair<int, int> position);
     void setSelectedSquare(pair<int, int> position, bool isSelected);
-    void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
-    void moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes);
     bool checkFirstClick(pair<int, int> positionClicked);
     bool checkSecondClick(pair<int, int> positionClicked);
     pair<int, int> getIndexByMousePosition(pair<int, int> position);

@@ -11,10 +11,13 @@ public:
     Player(int id);
     ~Player();
     int getId();
-    void addArmy(const pair<int, int> position, int powerArmy);
-    void moveArmy(const pair<int, int> newPosition, int powerArmy);
+
+    void moveOrMergeArmy(const pair<int, int> position, int powerArmy);
+    void moveArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition);
+    void mergeArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition);
+    void deleteArmy(pair<int, int> position);
     void changeArmy(const pair<int, int> position, int powerArmy);
-    void deleteArmy(const pair<int, int> position);
+
     bool isArmy(const pair<int, int> position);
     int getArmyPower(const pair<int, int> position);
     int getArmySize();

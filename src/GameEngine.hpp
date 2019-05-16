@@ -16,12 +16,15 @@ public:
     void setSelectedSquare(pair<int, int>);
     pair<int,int> getSelectedSquare();
     void resetSelectedSquare();
-    void moveOrMergePlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
     void fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
     void switchCurrentPlayerId();
     int getCurrentIdPlayer();
+    int getEnnemyIdPlayer();
     int getCurrentRound();
+
+    void play(pair<int, int> oldPosition, pair<int, int> newPosition);
+    void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
 
 private:
     int generateNumber0into100();

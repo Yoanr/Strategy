@@ -1,11 +1,12 @@
 #include "GameEngine.hpp"
+#include <unistd.h>
 
 int GameEngine::generateNumber0into100(){
     srand(time(NULL));
     return rand() % 100 + 0;
 }
 GameEngine::GameEngine(){
-    player1.addArmy(SPAWNP1, 1);
+    player1.moveOrMergeArmy(SPAWNP1, 1);
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
@@ -55,6 +56,11 @@ int GameEngine::getCurrentIdPlayer(){
     return currentPlayerId;
 }
 
+int GameEngine::getEnnemyIdPlayer()
+{
+    return getEnnemyPlayer().getId();
+}
+
 bool GameEngine::armyPresent(pair<int, int> indexes)
 {
     bool b = getCurrentPlayer().isArmy(indexes);
@@ -74,10 +80,10 @@ void GameEngine::resetSelectedSquare()
 void GameEngine::switchCurrentPlayerId(){
     if(currentPlayerId == 1){
         currentPlayerId = 2;
-        player2.addArmy(SPAWNP2, 1);
+        player2.moveOrMergeArmy(SPAWNP2, 1);
     }else {
         currentPlayerId = 1;
-        player1.addArmy(SPAWNP1, 1);
+        player1.moveOrMergeArmy(SPAWNP1, 1);
         currentRound++;
     }
 }
@@ -102,14 +108,6 @@ Player& GameEngine::getEnnemyPlayer()
     }
 }
 
-void GameEngine::moveOrMergePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
-    int armyPower = getCurrentPlayer().getArmyPower(oldPosition);
-    getCurrentPlayer().deleteArmy(oldPosition);
-
-    getCurrentPlayer().addArmy(newPosition, armyPower);
-}
-#include <unistd.h>
-
 void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
     
     int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
@@ -133,7 +131,7 @@ void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
     }
     
     if (armyPowerCurrentPlayer>0){
-        getCurrentPlayer().addArmy(newPosition, armyPowerCurrentPlayer);
+        getCurrentPlayer().moveArmy(oldPosition,newPosition);
         getEnnemyPlayer().deleteArmy(newPosition);
     }else{
         getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
@@ -142,6 +140,46 @@ void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 
 int GameEngine::getCurrentRound(){
     return currentRound;
+}
+
+void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
+    resetSelectedSquare();
+    getSquare(oldPosition).setA(1);
+
+    pair<int, int> possibleArmy = getPossibleArmy(newPosition);
+    int idPossiblePlayerArmy = possibleArmy.first;
+
+    getSquare(oldPosition).setColor(color::white);
+    setColorSquareByPlayer(newPosition, getCurrentIdPlayer());
+
+    if (idPossiblePlayerArmy == Square::Type::basic)
+    {
+        getCurrentPlayer().moveArmy(oldPosition, newPosition);
+    }
+    else if (idPossiblePlayerArmy == getCurrentIdPlayer())
+    {
+        getCurrentPlayer().mergeArmy(oldPosition, newPosition);
+    }
+    else if (idPossiblePlayerArmy == getEnnemyIdPlayer())
+    {
+        fightPlayerArmy(oldPosition, newPosition);
+    }
+
+    switchCurrentPlayerId();
+}
+
+void GameEngine::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
+{
+    switch (idPlayer)
+    {
+    case 1:
+        getSquare(position).setColor(color::red);
+        break;
+
+    case 2:
+        getSquare(position).setColor(color::blue);
+        break;
+    }
 }
 
 pair<int, int> GameEngine::getSelectedSquare()

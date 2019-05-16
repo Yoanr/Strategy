@@ -36,23 +36,11 @@ void Interaction::drawPossibleArmy(pair<int, int> position)
 
     if (not (armyPower == 0))
     {
-        setColorSquareByPlayer(position,playerId);
+        gameEngine.setColorSquareByPlayer(position,playerId);
         Draw::getInstance().armyPower(armyPower);
     }
 }
 
-void Interaction::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
-{
-    switch (idPlayer) {
-        case 1:
-            gameEngine.getSquare(position).setColor(color::red);
-            break;
-
-        case 2:
-            gameEngine.getSquare(position).setColor(color::blue);
-            break;
-    }
-}
 
 pair<int, int> Interaction::getIndexByMousePosition(pair<int,int> position){
     return pair<int, int>(position.first / Config::SQUARESIZE, position.second / Config::SQUARESIZE);
@@ -101,54 +89,29 @@ void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
 {
     gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
 }
-
-void Interaction::moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes){
-    gameEngine.getSquare(oldIndexes).setColor(color::white);
-    setColorSquareByPlayer(newIndexes, gameEngine.getCurrentIdPlayer());
-}
-
 void Interaction::onMouse(S2D_Event e)
 {
     pair<int,int> position(e.x, e.y);
+    pair<int, int> newIndexes = getIndexByMousePosition(position);
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
             if(alreadyClicked){
-
                 if(checkSecondClick(position)){
                     pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
-                    pair<int, int> newIndexes = getIndexByMousePosition(position);
-
-                    gameEngine.resetSelectedSquare();
-
-                    setSelectedSquare(oldIndexes, false);
+                    gameEngine.play(oldIndexes, newIndexes);
 
                     alreadyClicked = false;
-
-                    pair<int,int> p = gameEngine.getPossibleArmy(newIndexes);
-
-                    moveSquare(oldIndexes, newIndexes);
-                    if (p.first == gameEngine.getCurrentIdPlayer() || p.first == 0)
-                    {
-                        gameEngine.moveOrMergePlayerArmy(oldIndexes, newIndexes);
-                    }else{
-                        
-                        gameEngine.fightPlayerArmy(oldIndexes, newIndexes);
-                    }
-
-                    gameEngine.switchCurrentPlayerId();
                 }
-
             }else{
                 if (checkFirstClick(position))
                 {
                     gameEngine.setSelectedSquare(position);
-                    setSelectedSquare(getIndexByMousePosition(position), true);
+                    setSelectedSquare(newIndexes, true);
 
                     alreadyClicked = true;
                 }
             }
-
             break;
 
         case S2D_MOUSE_UP:
