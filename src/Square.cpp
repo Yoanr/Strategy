@@ -54,6 +54,10 @@ void Square::setA(float aGiven){
     a = aGiven;
 }
 
+void Square::setType(Type tGiven){
+    t = tGiven;
+}
+
 void Square::setColor(color::Color color){
     r=color.r;
     g=color.g;

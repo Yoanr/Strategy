@@ -44,7 +44,7 @@ private:
     int currentRound{1};
 
     void resetSelectedSquare();
-    void fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
+    bool fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition, Player& player);
     void moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
     void switchCurrentPlayerId();

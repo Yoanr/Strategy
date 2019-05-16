@@ -113,11 +113,11 @@ Player& GameEngine::getEnnemyPlayer()
     }
 }
 
-void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
+bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition, Player& Ennemyplayer){
 
     int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
 
-    int armyPowerEnnemyPlayer = getEnnemyPlayer().getArmyPower(newPosition);
+    int armyPowerEnnemyPlayer = Ennemyplayer.getArmyPower(newPosition);
 
     while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
         int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
@@ -135,41 +135,25 @@ void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
     }
 
     if (armyPowerCurrentPlayer>0){
-        getCurrentPlayer().moveArmy(oldPosition,newPosition);
-        getEnnemyPlayer().deleteArmy(newPosition);
+        getCurrentPlayer().moveArmy(oldPosition, newPosition);
+        getCurrentPlayer().changeArmy(newPosition, armyPowerCurrentPlayer);
+        Ennemyplayer.deleteArmy(newPosition);
+        return true;
     }else{
         getCurrentPlayer().deleteArmy(oldPosition);
-        getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
+        Ennemyplayer.changeArmy(newPosition, armyPowerEnnemyPlayer);
+        return false;
     }
 }
 
-//TODO to refactor with fightPlayerArmy function
 void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
-    int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
-    int armyPowerBomb = armyPowerCurrentPlayer;
-
-    cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" <<endl;
-
-    while (armyPowerCurrentPlayer > 0 && armyPowerBomb > 0){
-        int proportion = 100 / (armyPowerCurrentPlayer + armyPowerBomb);
-        sleep(1);
-        int rand = generateNumber0into100();
-        std::cout << "rand: " << rand << std::endl;
-        if ( rand < proportion * armyPowerCurrentPlayer){
-            armyPowerBomb--;
-            std::cout << "fight won current" << std::endl;
-        }else{
-            armyPowerCurrentPlayer--;
-            std::cout << "fight won bomb" << std::endl;
-        }
-        std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pbomb" << armyPowerBomb << std::endl;
+    cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
+    Player bomb(3); // create virtual ennemy
+    bomb.moveOrMergeArmy(newPosition, getCurrentPlayer().getArmyPower(oldPosition));
+    if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
+        getSquare(newPosition).setType(Square::Type::basic);
     }
-
-    if (armyPowerCurrentPlayer>0){
-       getCurrentPlayer().moveArmy(oldPosition,newPosition);
-    } else{
-        getCurrentPlayer().deleteArmy(oldPosition);
-    }
+    
 }
 
 int GameEngine::getCurrentRound(){
@@ -207,7 +191,7 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
     }
     else if (idPossiblePlayerArmy == getEnnemyIdPlayer())
     {
-        fightPlayerArmy(oldPosition, newPosition);
+        fightPlayerArmy(oldPosition, newPosition, getEnnemyPlayer());
     }
 
     switchCurrentPlayerId();

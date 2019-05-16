@@ -28,6 +28,7 @@ public:
     void setB(float b);
     void setA(float a);
     void setColor(color::Color color);
+    void setType(Type t);
 
 private:
     float r;
