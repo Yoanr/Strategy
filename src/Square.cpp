@@ -10,6 +10,14 @@ Square::Square(Type typeGiven) : t(typeGiven)
             b = 0;
             a = 1;
             break;
+        //TODO remove color on bomb square
+        case Square::Type::bomb:
+            r = 1;
+            g = 1;
+            b = 0;
+            a = 1;
+            break;
+
         default:
             r = 1;
             g = 1;

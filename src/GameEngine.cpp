@@ -2,33 +2,38 @@
 #include <unistd.h>
 
 int GameEngine::generateNumber0into100(){
-    srand(time(NULL));
     return rand() % 100 + 0;
 }
-GameEngine::GameEngine(){
+
+int GameEngine::getProbaBomb(Config::Level level){
+    return level*15;
+}
+
+GameEngine::GameEngine() {
+    srand(time(NULL));
+
     player1.moveOrMergeArmy(SPAWNP1, 1);
-    for (int i = 0; i < GRIDSIZE; i++)
-    {
-        for (int j = 0; j < GRIDSIZE; j++)
-        {
+
+    for (int i = 0; i < GRIDSIZE; i++) {
+        for (int j = 0; j < GRIDSIZE; j++) {
             pair<int, int> ij = pair<int, int>(i, j);
             Square::Type currentType = Square::Type::basic;
 
-            if ((i == TOWER1.first && j == TOWER1.second) || (i == TOWER2.first && j == TOWER2.second) || (i == TOWER3.first && j == TOWER3.second))
-            {
+            if ((i == TOWER1.first && j == TOWER1.second) || (i == TOWER2.first && j == TOWER2.second) ||
+                (i == TOWER3.first && j == TOWER3.second)) {
                 currentType = Square::Type::tower;
-            }
-            else if (i == SPAWNP1.first && j == SPAWNP1.second){
+            } else if (i == SPAWNP1.first && j == SPAWNP1.second) {
                 currentType = Square::Type::spawn1;
-            }
-            else if((i == SPAWNP2.first && j == SPAWNP2.second)){
-                currentType = Square::Type::spawn2 ;
-            }
-            else if (generateNumber0into100() < PROBABOMB && ((i != SPAWNP1.first && j != SPAWNP1.second)))
-            {
+            } else if ((i == SPAWNP2.first && j == SPAWNP2.second)) {
+                currentType = Square::Type::spawn2;
+            } else if (generateNumber0into100() < getProbaBomb(Config::DIFFICULTY) &&
+                       getSquare(pair<int, int>(i - 1, j)).getType() != Square::Type::bomb &&
+                       getSquare(pair<int, int>(i, j - 1)).getType() != Square::Type::bomb) {
+
                 currentType = Square::Type::bomb;
             }
-            board.insert(pair<pair<int, int>, Square>(ij, Square(currentType)));
+
+            board.insert(pair < pair < int, int > , Square > (ij, Square(currentType)));
         }
     }
 }
@@ -109,9 +114,8 @@ Player& GameEngine::getEnnemyPlayer()
 }
 
 void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
-    
+
     int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
-    getCurrentPlayer().deleteArmy(oldPosition);
 
     int armyPowerEnnemyPlayer = getEnnemyPlayer().getArmyPower(newPosition);
 
@@ -129,12 +133,42 @@ void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
         }
         std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
     }
-    
+
     if (armyPowerCurrentPlayer>0){
         getCurrentPlayer().moveArmy(oldPosition,newPosition);
         getEnnemyPlayer().deleteArmy(newPosition);
     }else{
+        getCurrentPlayer().deleteArmy(oldPosition);
         getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
+    }
+}
+
+//TODO to refactor with fightPlayerArmy function
+void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
+    int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
+    int armyPowerBomb = armyPowerCurrentPlayer;
+
+    cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" <<endl;
+
+    while (armyPowerCurrentPlayer > 0 && armyPowerBomb > 0){
+        int proportion = 100 / (armyPowerCurrentPlayer + armyPowerBomb);
+        sleep(1);
+        int rand = generateNumber0into100();
+        std::cout << "rand: " << rand << std::endl;
+        if ( rand < proportion * armyPowerCurrentPlayer){
+            armyPowerBomb--;
+            std::cout << "fight won current" << std::endl;
+        }else{
+            armyPowerCurrentPlayer--;
+            std::cout << "fight won bomb" << std::endl;
+        }
+        std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pbomb" << armyPowerBomb << std::endl;
+    }
+
+    if (armyPowerCurrentPlayer>0){
+       getCurrentPlayer().moveArmy(oldPosition,newPosition);
+    } else{
+        getCurrentPlayer().deleteArmy(oldPosition);
     }
 }
 
@@ -143,11 +177,11 @@ int GameEngine::getCurrentRound(){
 }
 
 bool GameEngine::isNotEnnemySpawn(pair<int, int> position){
-if(currentPlayerId == 1){
-    return  (SPAWNP2 == position);
-}else{
-    return (SPAWNP1 == position);
-}
+    if(currentPlayerId == 1){
+        return  (SPAWNP2 == position);
+    }else{
+        return (SPAWNP1 == position);
+    }
 }
 
 void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
@@ -158,11 +192,14 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
     int idPossiblePlayerArmy = possibleArmy.first;
 
     getSquare(oldPosition).setColor(color::white);
-    setColorSquareByPlayer(newPosition, getCurrentIdPlayer());
 
-    if (idPossiblePlayerArmy == Square::Type::basic)
+    if (idPossiblePlayerArmy == 0)
     {
-        getCurrentPlayer().moveArmy(oldPosition, newPosition);
+        if(getSquare(newPosition).getType() == Square::Type::bomb){
+            moveToBomb(oldPosition, newPosition);
+        } else{
+            getCurrentPlayer().moveArmy(oldPosition, newPosition);
+        }
     }
     else if (idPossiblePlayerArmy == getCurrentIdPlayer())
     {
@@ -180,13 +217,13 @@ void GameEngine::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
 {
     switch (idPlayer)
     {
-    case 1:
-        getSquare(position).setColor(color::red);
-        break;
+        case 1:
+            getSquare(position).setColor(color::red);
+            break;
 
-    case 2:
-        getSquare(position).setColor(color::blue);
-        break;
+        case 2:
+            getSquare(position).setColor(color::blue);
+            break;
     }
 }
 

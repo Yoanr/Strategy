@@ -68,7 +68,7 @@ bool Player::isArmy(const pair<int, int> position)
 
 int Player::getArmyPower(const pair<int, int> position)
 {
-    return army.find(position)->second;
+    return army[position];
 }
 
 int Player::getId(){

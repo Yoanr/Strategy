@@ -34,7 +34,7 @@ void Interaction::drawPossibleArmy(pair<int, int> position)
     int playerId = p.first;
     int armyPower = p.second;
 
-    if (not (armyPower == 0))
+    if (not armyPower == 0)
     {
         gameEngine.setColorSquareByPlayer(position,playerId);
         Draw::getInstance().armyPower(armyPower);
@@ -83,8 +83,11 @@ bool Interaction::checkSecondClick(pair<int,int>  position)
     }
 
     //Check the move
-    if ( (newIndexes.first != oldIndexes.first + 1 && newIndexes.first != oldIndexes.first - 1 && newIndexes.first != oldIndexes.first)  ||
-         (newIndexes.second != oldIndexes.second + 1 && newIndexes.second != oldIndexes.second - 1 && newIndexes.second != oldIndexes.second)) {
+    if ( not ((newIndexes.first == oldIndexes.first + 1 && newIndexes.second == oldIndexes.second) ||
+              (newIndexes.first == oldIndexes.first - 1 && newIndexes.second == oldIndexes.second) ||
+              (newIndexes.first == oldIndexes.first && newIndexes.second == oldIndexes.second + 1) ||
+              (newIndexes.first == oldIndexes.first && newIndexes.second == oldIndexes.second - 1)))
+    {
         return false;
     }
 

@@ -3,6 +3,7 @@
 
 #include "Square.hpp"
 #include "Player.hpp"
+#include "Config.hpp"
 #include <map>
 using namespace std;
 
@@ -11,26 +12,20 @@ class GameEngine
 public:
     GameEngine();
     ~GameEngine();
-    pair<int, int> getPossibleArmy(pair<int, int> position);
-    Square &getSquare(pair<int, int> position);
-    void setSelectedSquare(pair<int, int>);
-    pair<int,int> getSelectedSquare();
-    void resetSelectedSquare();
-    void fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
-    bool armyPresent(pair<int, int>);
-    void switchCurrentPlayerId();
-    int getCurrentIdPlayer();
-    int getEnnemyIdPlayer();
-    int getCurrentRound();
-    bool isNotEnnemySpawn(pair<int, int> position);
 
+    Square &getSquare(pair<int, int> position);
+    pair<int, int> getPossibleArmy(pair<int, int> position);
+    pair<int,int> getSelectedSquare();
+    int getCurrentIdPlayer();
+    bool isNotEnnemySpawn(pair<int, int> position);
+    void setSelectedSquare(pair<int, int>);
     void play(pair<int, int> oldPosition, pair<int, int> newPosition);
     void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
 
 private:
+    int getProbaBomb(Config::Level level);
     int generateNumber0into100();
     map<pair<int, int>, Square> board;
-    const int PROBABOMB{20};
     const int GRIDSIZE = 12;
     const pair<int, int> SPAWNP1{5, 0};
     const pair<int, int> SPAWNP2{5, 10};
@@ -47,6 +42,14 @@ private:
     Player& getEnnemyPlayer();
     int currentPlayerId{1};
     int currentRound{1};
+
+    void resetSelectedSquare();
+    void fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition);
+    void moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition);
+    bool armyPresent(pair<int, int>);
+    void switchCurrentPlayerId();
+    int getEnnemyIdPlayer();
+    int getCurrentRound();
 };
 
 #endif
