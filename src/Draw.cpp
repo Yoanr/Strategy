@@ -71,6 +71,8 @@ void Draw::square(Square square)
         case Square::Type::spawn2:
             D4Lines(color::blue);
             break;
+        case Square::Type::tower:
+            D4Lines(color::green);
 
         default:
             break;

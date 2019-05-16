@@ -174,8 +174,16 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
 
     pair<int, int> possibleArmy = getPossibleArmy(newPosition);
     int idPossiblePlayerArmy = possibleArmy.first;
-
-    getSquare(oldPosition).setColor(color::white);
+    
+    //Set color
+    if (getSquare(oldPosition).getType() == Square::Type::basic){
+        getSquare(oldPosition).setColor(color::white); //Todo method type -> color
+    }
+    else if (getSquare(oldPosition).getType() == Square::Type::tower)
+    {
+        getSquare(oldPosition).setColor(color::green);
+    }
+        
 
     if (idPossiblePlayerArmy == 0)
     {
