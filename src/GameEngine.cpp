@@ -5,12 +5,12 @@ int GameEngine::generateNumber0into100(){
     return rand() % 100 + 0;
 }
 GameEngine::GameEngine(){
-
+    player1.addArmy(SPAWNP1, 1);
     for (int i = 0; i < GRIDSIZE; i++)
     {
         for (int j = 0; j < GRIDSIZE; j++)
         {
-            std::pair<int, int> ij = std::pair<int, int>(i, j);
+            pair<int, int> ij = pair<int, int>(i, j);
             Square::Type currentType = Square::Type::basic;
 
             if ((i == TOWER1.first && j == TOWER1.second) || (i == TOWER2.first && j == TOWER2.second) || (i == TOWER3.first && j == TOWER3.second))
@@ -27,15 +27,126 @@ GameEngine::GameEngine(){
             {
                 currentType = Square::Type::bomb;
             }
-
-            board.insert(std::pair<std::pair<int, int>, Square>(ij, Square(currentType)));
+            board.insert(pair<pair<int, int>, Square>(ij, Square(currentType)));
         }
     }
 }
 
-Square& GameEngine::getSquare(int i, int j){
-    std::map<std::pair<int, int>, Square>::iterator it = board.find(std::pair<int, int>(i, j));
+pair<int, int> GameEngine::getPossibleArmy(pair<int, int> position)
+{
+    if (player1.isArmy(position))
+    {
+        return pair<int, int>(1, player1.getArmyPower(position));
+    }
+    else if (player2.isArmy(position))
+    {
+        return pair<int, int>(2, player2.getArmyPower(position));
+    }
+    return pair<int,int>(0,0);
+}
+
+Square &GameEngine::getSquare(pair<int, int> position)
+{
+    map<pair<int, int>, Square>::iterator it = board.find(position);
     return it->second;
+}
+
+int GameEngine::getCurrentIdPlayer(){
+    return currentPlayerId;
+}
+
+bool GameEngine::armyPresent(pair<int, int> indexes)
+{
+    bool b = getCurrentPlayer().isArmy(indexes);
+    return b;
+}
+
+void GameEngine::setSelectedSquare(pair<int, int> indexes)
+{
+    selectedSquareIndexes = indexes;
+}
+
+void GameEngine::resetSelectedSquare()
+{
+    selectedSquareIndexes = pair<int,int>(-1,-1);
+}
+
+void GameEngine::switchCurrentPlayerId(){
+    if(currentPlayerId == 1){
+        currentPlayerId = 2;
+        player2.addArmy(SPAWNP2, 1);
+    }else {
+        currentPlayerId = 1;
+        player1.addArmy(SPAWNP1, 1);
+        currentRound++;
+    }
+}
+
+Player& GameEngine::getCurrentPlayer(){
+    if (currentPlayerId == 1) {
+        return player1;
+    } else {
+        return player2;
+    }
+}
+
+Player& GameEngine::getEnnemyPlayer()
+{
+    if (currentPlayerId == 1)
+    {
+        return player2;
+    }
+    else
+    {
+        return player1;
+    }
+}
+
+void GameEngine::moveOrMergePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
+    int armyPower = getCurrentPlayer().getArmyPower(oldPosition);
+    getCurrentPlayer().deleteArmy(oldPosition);
+
+    getCurrentPlayer().addArmy(newPosition, armyPower);
+}
+#include <unistd.h>
+
+void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
+    
+    int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
+    getCurrentPlayer().deleteArmy(oldPosition);
+
+    int armyPowerEnnemyPlayer = getEnnemyPlayer().getArmyPower(newPosition);
+
+    while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
+        int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
+        sleep(1);
+        int rand = generateNumber0into100();
+        std::cout << "rand: " << rand << std::endl;
+        if ( rand < proportion * armyPowerCurrentPlayer){
+            armyPowerEnnemyPlayer--;
+            std::cout << "fight won current" << std::endl;
+        }else{
+            armyPowerCurrentPlayer--;
+            std::cout << "fight won ennemy" << std::endl;
+        }
+        std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
+    }
+    
+    if (armyPowerCurrentPlayer>0){
+        getCurrentPlayer().addArmy(newPosition, armyPowerCurrentPlayer);
+        getEnnemyPlayer().deleteArmy(newPosition);
+    }else{
+        getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
+    }
+}
+
+int GameEngine::getCurrentRound(){
+    return currentRound;
+}
+
+pair<int, int> GameEngine::getSelectedSquare()
+{
+    return selectedSquareIndexes;
 }
 
 GameEngine::~GameEngine()

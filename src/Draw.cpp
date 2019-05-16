@@ -1,84 +1,106 @@
 #include "Draw.hpp"
 #include "simple2d.h"
+#include <iostream>
+#include "Config.hpp"
 
-void Draw::line(int l1x, int l1y, int l2x, int l2y, int lineWidth, float r, float g, float b)
+
+Draw& Draw::getInstance(){
+    static Draw instance;
+    return instance;
+}
+void Draw::setPosition(pair<int,int> positionGiven){
+position = positionGiven;
+}
+void Draw::line(int l1x, int l1y, int l2x, int l2y, color::Color color)
 {
     S2D_DrawLine(l1x, l1y, l2x, l2y,
-                 lineWidth,
-                 r, g, b, 1,
-                 r, g, b, 1,
-                 r, g, b, 1,
-                 r, g, b, 1);
+                 Config::LINEWIDTH,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a,
+                 color.r, color.g, color.b, color.a);
 }
 
-void Draw::D4Lines(int i, int j, int lineWidth, int squareSize, float r, float g, float b)
+void Draw::D4Lines(color::Color color)
 {
-    int l1x = i * squareSize;
-    int l1y = j * squareSize;
-    int l2x = l1x + squareSize;
-    int l3y = l1y + squareSize;
+    int l1x = position.first * Config::SQUARESIZE;
+    int l1y = position.second * Config::SQUARESIZE;
+    int l2x = l1x + Config::SQUARESIZE;
+    int l3y = l1y + Config::SQUARESIZE;
 
-    line(l1x, l1y, l2x, l1y, lineWidth, r, g, b);
-    line(l2x, l1y, l2x, l3y, lineWidth, r, g, b);
-    line(l2x, l3y, l1x, l3y, lineWidth, r, g, b);
-    line(l1x, l3y, l1x, l1y, lineWidth, r, g, b);
+    line(l1x, l1y, l2x, l1y, color);
+    line(l2x, l1y, l2x, l3y, color);
+    line(l2x, l3y, l1x, l3y, color);
+    line(l1x, l3y, l1x, l1y, color);
 }
 
-void Draw::D2Lines(int i, int j, int lineWidth, int squareSize, float r, float g, float b)
+void Draw::D2Lines(color::Color color)
 {
-    int l1x = i * squareSize;
-    int l1y = j * squareSize;
-    int l2x = l1x + squareSize;
-    int l3y = l1y + squareSize;
+    int l1x = position.first * Config::SQUARESIZE;
+    int l1y = position.second * Config::SQUARESIZE;
+    int l2x = l1x + Config::SQUARESIZE;
+    int l3y = l1y + Config::SQUARESIZE;
 
-    //drawLine(l1x, l1y, l2x, l1y, lineWidth, r, g, b);
-    line(l2x, l1y, l2x, l3y, lineWidth, r, g, b);
-    line(l2x, l3y, l1x, l3y, lineWidth, r, g, b);
-    //drawLine(l1x, l3y, l1x, l1y, lineWidth, r, g, b);
+    line(l2x, l1y, l2x, l3y, color);
+    line(l2x, l3y, l1x, l3y, color);
 }
 
-void Draw::square(int i, int j, int squareSize, int lineWidth, Square::Type squareType)
+void Draw::square(Square square)
 {
-    int x1 = i * squareSize + lineWidth;
-    int y1 = j * squareSize + lineWidth;
-    int x2 = x1 + squareSize - lineWidth;
-    int y2 = y1 + lineWidth;
-    int x3 = x2 - lineWidth;
-    int y3 = y2 + squareSize - lineWidth;
-    int x4 = x1 + lineWidth;
-    int y4 = y3 - lineWidth;
+    int x1 = position.first * Config::SQUARESIZE + Config::LINEWIDTH;
+    int y1 = position.second * Config::SQUARESIZE + Config::LINEWIDTH;
+    int x2 = x1 + Config::SQUARESIZE - Config::LINEWIDTH;
+    int y2 = y1 + Config::LINEWIDTH;
+    int x3 = x2 - Config::LINEWIDTH;
+    int y3 = y2 + Config::SQUARESIZE - Config::LINEWIDTH;
+    int x4 = x1 + Config::LINEWIDTH;
+    int y4 = y3 - Config::LINEWIDTH;
 
-    switch (squareType)
+    S2D_DrawQuad(x1, y1, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x2, y2, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x3, y3, square.getR(), square.getG(), square.getB(), square.getA(),
+                 x4, y4, square.getR(), square.getG(), square.getB(), square.getA());
+
+    switch (square.getType())
     {
-    case Square::Type::tower:
-        S2D_DrawQuad(x1, y1, 0, 1, 0, 1,
-                     x2, y2, 0, 1, 0, 1,
-                     x3, y3, 0, 1, 0, 1,
-                     x4, y4, 0, 1, 0, 1);
-        break;
 
-    case Square::Type::spawn1:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
+        case Square::Type::spawn1:
+            D4Lines(color::red);
+            break;
 
-        D4Lines(i, j, lineWidth, squareSize, 1, 0, 0);
-        break;
+        case Square::Type::spawn2:
+            D4Lines(color::blue);
+            break;
 
-    case Square::Type::spawn2:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
-
-        D4Lines(i, j, lineWidth, squareSize, 0, 0, 1);
-        break;
-
-    default:
-        S2D_DrawQuad(x1, y1, 1, 1, 1, 1,
-                     x2, y2, 1, 1, 1, 1,
-                     x3, y3, 1, 1, 1, 1,
-                     x4, y4, 1, 1, 1, 1);
+        default:
+            break;
     }
+}
+
+void Draw::armyPower(int armyPower)
+{
+    string armyPowerStr = to_string(armyPower);
+    int txtSize = 0;
+    if(armyPower > 9) {
+        txtSize = 25;
+    }else{
+        txtSize = 30;
+    }
+
+    S2D_Text *txt = S2D_CreateText("./resources/fonts/verdana.ttf", armyPowerStr.c_str(), txtSize);
+    if (txt)
+    {
+        txt->color.r = 1;
+        txt->color.g = 1;
+        txt->color.b = 1;
+        txt->color.a = 1;
+        txt->x = position.first * Config::SQUARESIZE - (Config::LINEWIDTH) + txtSize / 2;
+        txt->y = position.second * Config::SQUARESIZE - (Config::LINEWIDTH) + txtSize / 3;
+        S2D_DrawText(txt);
+    }
+    else
+    {
+        cout << "fonts error" << endl;
+    }
+    S2D_FreeText(txt);
 }

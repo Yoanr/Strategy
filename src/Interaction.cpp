@@ -3,41 +3,156 @@
 #include "Lambda.hpp"
 #include "GameEngine.hpp"
 #include "Draw.hpp"
-
+#include "Config.hpp"
 
 
 
 void Interaction::render()
 {
-    int gridSize = 11;
-    int lineWidth = 2;
-    int squareSize = 50;
-
-    for (int i = 0; i <  gridSize; i++)
+    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
     {
-        for (int j = 0; j <  gridSize; j++)
+        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
         {
-            Draw::D2Lines(i, j, lineWidth, squareSize, 0, 0, 0); //Black color
-            Draw::square(i, j, squareSize, lineWidth, gameEngine.getSquare(i, j).getType());
+            pair<int, int> position(i, j);
+            Draw::getInstance().setPosition(position);
+
+            drawField(position);
+            drawPossibleArmy(position);
         }
     }
 }
 
+void Interaction::drawField(pair<int, int> position)
+{
+    Draw::getInstance().D2Lines(color::black); //Black color
+    Draw::getInstance().square(gameEngine.getSquare(position));
+}
+
+void Interaction::drawPossibleArmy(pair<int, int> position)
+{
+    pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
+    int playerId = p.first;
+    int armyPower = p.second;
+
+    if (not (armyPower == 0))
+    {
+        setColorSquareByPlayer(position,playerId);
+        Draw::getInstance().armyPower(armyPower);
+    }
+}
+
+void Interaction::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
+{
+    switch (idPlayer) {
+        case 1:
+            gameEngine.getSquare(position).setColor(color::red);
+            break;
+
+        case 2:
+            gameEngine.getSquare(position).setColor(color::blue);
+            break;
+    }
+}
+
+pair<int, int> Interaction::getIndexByMousePosition(pair<int,int> position){
+    return pair<int, int>(position.first / Config::SQUARESIZE, position.second / Config::SQUARESIZE);
+}
+
+bool Interaction::checkFirstClick(pair<int, int> position)
+{
+    if (position.first > Config::GRIDSIZE || position.second > Config::GRIDSIZE)
+    { // Positions ?
+        return false;
+    }
+
+    pair<int, int> indexes = getIndexByMousePosition(position);
+    pair<int, int> res = gameEngine.getPossibleArmy(indexes);
+    if (res.first != gameEngine.getCurrentIdPlayer()) // Army ?
+    {
+        return false;
+    }
+
+    return true;
+}
+
+bool Interaction::checkSecondClick(pair<int,int>  position)
+{
+    if (position.first > Config::GRIDSIZE || position.second > Config::GRIDSIZE)
+    { // Positions ?
+        return false;
+    }
+    pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+    pair<int, int> newIndexes = getIndexByMousePosition(position);
+    if (oldIndexes == newIndexes) // Army ?
+    {
+        return false;
+    }
+
+    //Check the move
+    if ( (newIndexes.first != oldIndexes.first + 1 && newIndexes.first != oldIndexes.first - 1 && newIndexes.first != oldIndexes.first)  ||
+         (newIndexes.second != oldIndexes.second + 1 && newIndexes.second != oldIndexes.second - 1 && newIndexes.second != oldIndexes.second)) {
+        return false;
+    }
+
+    return true;
+}
+
+void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
+{
+    gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
+}
+
+void Interaction::moveSquare(pair<int, int> oldIndexes, pair<int, int> newIndexes){
+    gameEngine.getSquare(oldIndexes).setColor(color::white);
+    setColorSquareByPlayer(newIndexes, gameEngine.getCurrentIdPlayer());
+}
 
 void Interaction::onMouse(S2D_Event e)
 {
+    pair<int,int> position(e.x, e.y);
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
-            // Mouse button was pressed
-            std::cout << "down" << e.x << std::endl;
-            // Use `e.button` to see what button was clicked
-            // Check `e.dblclick` to see if was a double click
+            if(alreadyClicked){
+
+                if(checkSecondClick(position)){
+                    pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+                    pair<int, int> newIndexes = getIndexByMousePosition(position);
+
+                    gameEngine.resetSelectedSquare();
+
+                    setSelectedSquare(oldIndexes, false);
+
+                    alreadyClicked = false;
+
+                    pair<int,int> p = gameEngine.getPossibleArmy(newIndexes);
+
+                    moveSquare(oldIndexes, newIndexes);
+                    if (p.first == gameEngine.getCurrentIdPlayer() || p.first == 0)
+                    {
+                        gameEngine.moveOrMergePlayerArmy(oldIndexes, newIndexes);
+                    }else{
+                        
+                        gameEngine.fightPlayerArmy(oldIndexes, newIndexes);
+                    }
+
+                    gameEngine.switchCurrentPlayerId();
+                }
+
+            }else{
+                if (checkFirstClick(position))
+                {
+                    gameEngine.setSelectedSquare(position);
+                    setSelectedSquare(getIndexByMousePosition(position), true);
+
+                    alreadyClicked = true;
+                }
+            }
+
             break;
 
         case S2D_MOUSE_UP:
             // Mouse button was released
-            std::cout << "up" << e.x << std::endl;
             // Use `e.button` to see what button was clicked
             // Check `e.dblclick` to see if was a double click
             break;
@@ -59,6 +174,7 @@ void Interaction::onMouse(S2D_Event e)
 
 void Interaction::init()
 {
+    Draw::getInstance();
     S2D_Window *windowGiven = S2D_CreateWindow(
             "Game", 1000, 700, nullptr, nullptr, 0);
     window = windowGiven;
