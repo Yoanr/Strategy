@@ -4,13 +4,17 @@
 
 int main()
 {
-   GameEngine gameEngine;
-   Interaction interaction(gameEngine);
+    bool wantToReplay{true};
 
-   interaction.init();
-   interaction.start();
+    while (wantToReplay)
+    {
+        GameEngine *gameEngine = new GameEngine;
+        Interaction *interaction = new Interaction(*gameEngine);
 
-   //gameEngine.idle();
-
+        interaction->idle();
+        wantToReplay = interaction->getwantToReplay();
+        delete (gameEngine);
+        delete (interaction);
+    }
     return 0;
 }

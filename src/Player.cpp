@@ -78,3 +78,15 @@ int Player::getId(){
 Player::~Player()
 {
 }
+
+int Player::getNumberOfTowerCaptured(){
+    return numberOfTowerCaptured;
+}
+void Player::numberOfTowerCapturedIncremented()
+{
+    numberOfTowerCaptured++;
+}
+void Player::numberOfTowerCapturedDecremented()
+{
+    numberOfTowerCaptured--;
+}

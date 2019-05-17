@@ -19,11 +19,14 @@ public:
     int getCurrentIdPlayer();
     bool isNotEnnemySpawn(pair<int, int> position);
     void setSelectedSquare(pair<int, int>);
+    bool getHasWon();
+    void setHasWon(bool hasWonGiven); // cheatcode
     void play(pair<int, int> oldPosition, pair<int, int> newPosition);
     void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
 
 private:
     int getProbaBomb(Config::Level level);
+    int hasWon{false};
     int generateNumber0into100();
     map<pair<int, int>, Square> board;
     const int GRIDSIZE = 12;
@@ -47,9 +50,10 @@ private:
     bool fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition, Player& player);
     void moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
-    void switchCurrentPlayerId();
+    void manageEndOfRound();
     int getEnnemyIdPlayer();
     int getCurrentRound();
+    void checkTowers();
 };
 
 #endif

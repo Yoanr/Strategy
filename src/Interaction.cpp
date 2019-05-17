@@ -20,6 +20,9 @@ void Interaction::render()
             drawPossibleArmy(position);
         }
     }
+    if(gameEngine.getHasWon()){
+        Draw::getInstance().victory(gameEngine.getCurrentIdPlayer());
+    }
 }
 
 void Interaction::drawField(pair<int, int> position)
@@ -98,53 +101,68 @@ void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
 {
     gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
 }
+
+void Interaction::onMousePlay(pair<int, int> pMouse)
+{
+    pair<int, int> newIndexes = getIndexByMousePosition(pMouse);
+    if (alreadyClicked)
+    {
+        if (checkSecondClick(pMouse))
+        {
+            pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
+            gameEngine.play(oldIndexes, newIndexes);
+
+            alreadyClicked = false;
+        }
+    }
+    else
+    {
+        if (checkFirstClick(pMouse))
+        {
+            gameEngine.setSelectedSquare(pMouse);
+            setSelectedSquare(newIndexes, true);
+
+            alreadyClicked = true;
+        }
+    }
+}
 void Interaction::onMouse(S2D_Event e)
 {
-    pair<int,int> position(e.x, e.y);
-    pair<int, int> newIndexes = getIndexByMousePosition(position);
+    pair<int, int> pMouse(e.x, e.y);
     switch (e.type)
     {
         case S2D_MOUSE_DOWN:
-            if(alreadyClicked){
-                if(checkSecondClick(position)){
-                    pair<int, int> oldIndexes = getIndexByMousePosition(gameEngine.getSelectedSquare());
-                    gameEngine.play(oldIndexes, newIndexes);
-
-                    alreadyClicked = false;
-                }
-            }else{
-                if (checkFirstClick(position))
-                {
-                    gameEngine.setSelectedSquare(position);
-                    setSelectedSquare(newIndexes, true);
-
-                    alreadyClicked = true;
-                }
-            }
-            break;
-
-        case S2D_MOUSE_UP:
-            // Mouse button was released
-            // Use `e.button` to see what button was clicked
-            // Check `e.dblclick` to see if was a double click
-            break;
-
-        case S2D_MOUSE_SCROLL:
-            // Mouse was scrolled
-            // Check `e.direction` for direction being scrolled, normal or inverted:
-            //   S2D_MOUSE_SCROLL_NORMAL
-            //   S2D_MOUSE_SCROLL_INVERTED
-            // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
-            break;
-
-        case S2D_MOUSE_MOVE:
-            // Mouse was moved
-            // Check `e.delta_x` and `e.delta_y` for the difference in x and y position
+        if(not gameEngine.getHasWon()){
+            onMousePlay(pMouse);
+        }else{
+            onMouseHasWon(pMouse);
+        }
+            
             break;
     }
 }
 
-void Interaction::init()
+void Interaction::onMouseHasWon(pair<int, int> pMouse)
+{
+   if (pMouse.first > 160 && pMouse.second > 290 && pMouse.first < 250 && pMouse.second < 340)
+   {
+       wantToReplay = true;
+        stop(); // Replay
+   }
+
+   if (pMouse.first > 320 && pMouse.second > 290 && pMouse.first < 410 && pMouse.second < 340)
+   {
+       wantToReplay = false;
+       stop(); // Quit
+    }
+}
+
+bool Interaction::getwantToReplay()
+{
+    return wantToReplay;
+}
+
+void Interaction::idle()
 {
     Draw::getInstance();
     S2D_Window *windowGiven = S2D_CreateWindow(
@@ -163,23 +181,6 @@ Interaction::Interaction(GameEngine gameEngineGiven) : gameEngine(gameEngineGive
 Interaction::~Interaction()
 {
     S2D_FreeWindow(window);
-}
-
-void Interaction::start()
-{
-
-
-    /* window->background.r = 0.5;
-     window->background.g = 0.5;
-     window->background.b = 0.5;
-     window->background.a = 1.0;
-
-     window->width = 1000;
-     window->height = 700;
-     window->title = "Strategy";
-     window->update = &update;
-     window->render = &render;*/
-
 }
 
 void Interaction::stop()

@@ -10,16 +10,19 @@ class Interaction {
 public:
     Interaction(GameEngine gameEngineGiven);
     ~Interaction();
-    void init();
-    void start();
+    void idle();
     void stop();
+    bool getwantToReplay();
 
 private:
     S2D_Window *window;
     GameEngine gameEngine;
     bool alreadyClicked{false};
+    bool wantToReplay{false};
 
     void onMouse(S2D_Event e);
+    void onMousePlay(pair<int, int> pMouse);
+    void onMouseHasWon(pair<int, int> pMouse);
     void render();
     void drawField(pair<int, int> position);
     void drawPossibleArmy(pair<int, int> position);

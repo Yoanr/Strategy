@@ -82,7 +82,18 @@ void GameEngine::resetSelectedSquare()
     selectedSquareIndexes = pair<int,int>(-1,-1);
 }
 
-void GameEngine::switchCurrentPlayerId(){
+bool GameEngine::getHasWon(){
+    return hasWon;
+}
+void GameEngine::setHasWon(bool hasWonGiven){
+    hasWon = hasWonGiven;
+}
+void GameEngine::manageEndOfRound(){
+    if (getCurrentPlayer().getNumberOfTowerCaptured() == 3)
+    {
+        hasWon = true;
+    }
+
     if(currentPlayerId == 1){
         currentPlayerId = 2;
         player2.moveOrMergeArmy(SPAWNP2, 1);
@@ -138,6 +149,12 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
         getCurrentPlayer().moveArmy(oldPosition, newPosition);
         getCurrentPlayer().changeArmy(newPosition, armyPowerCurrentPlayer);
         Ennemyplayer.deleteArmy(newPosition);
+
+        if (newPosition == TOWER1 || newPosition == TOWER2 || newPosition == TOWER3)
+        {
+            getCurrentPlayer().numberOfTowerCapturedIncremented();
+        }
+
         return true;
     }else{
         getCurrentPlayer().deleteArmy(oldPosition);
@@ -153,7 +170,6 @@ void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPositi
     if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
         getSquare(newPosition).setType(Square::Type::basic);
     }
-    
 }
 
 int GameEngine::getCurrentRound(){
@@ -174,16 +190,16 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
 
     pair<int, int> possibleArmy = getPossibleArmy(newPosition);
     int idPossiblePlayerArmy = possibleArmy.first;
-    
     //Set color
-    if (getSquare(oldPosition).getType() == Square::Type::basic){
+    if (getSquare(oldPosition).getType() == Square::Type::basic || getSquare(oldPosition).getType() == Square::Type::spawn1 || getSquare(oldPosition).getType() == Square::Type::spawn2)
+    {
         getSquare(oldPosition).setColor(color::white); //Todo method type -> color
     }
     else if (getSquare(oldPosition).getType() == Square::Type::tower)
     {
         getSquare(oldPosition).setColor(color::green);
     }
-        
+
 
     if (idPossiblePlayerArmy == 0)
     {
@@ -191,6 +207,11 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
             moveToBomb(oldPosition, newPosition);
         } else{
             getCurrentPlayer().moveArmy(oldPosition, newPosition);
+
+            if (getSquare(newPosition).getType() == Square::Type::tower)
+            {
+                getCurrentPlayer().numberOfTowerCapturedIncremented();
+            }
         }
     }
     else if (idPossiblePlayerArmy == getCurrentIdPlayer())
@@ -202,8 +223,14 @@ void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
         fightPlayerArmy(oldPosition, newPosition, getEnnemyPlayer());
     }
 
-    switchCurrentPlayerId();
+    //Update tower captured
+    if (getSquare(oldPosition).getType() == Square::Type::tower)
+    {
+        getCurrentPlayer().numberOfTowerCapturedDecremented();
+    }
+        manageEndOfRound();
 }
+
 
 void GameEngine::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
 {
@@ -226,4 +253,5 @@ pair<int, int> GameEngine::getSelectedSquare()
 
 GameEngine::~GameEngine()
 {
+    
 }

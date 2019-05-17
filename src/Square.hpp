@@ -22,6 +22,7 @@ public:
     float getG();
     float getB();
     float getA();
+    color::Color getColor();
 
     void setR(float r);
     void setG(float g);

@@ -1,4 +1,5 @@
 #include "Square.hpp"
+#include "Config.hpp"
 
 Square::Square(Type typeGiven) : t(typeGiven)
 {
@@ -10,13 +11,19 @@ Square::Square(Type typeGiven) : t(typeGiven)
             b = 0;
             a = 1;
             break;
-        //TODO remove color on bomb square
         case Square::Type::bomb:
+        if(Config::PRINTBOMB){
             r = 1;
             g = 1;
             b = 0;
             a = 1;
-            break;
+        }else{
+            r = 1;
+            g = 1;
+            b = 1;
+            a = 1;
+        }
+        break;
 
         default:
             r = 1;
@@ -71,4 +78,7 @@ Square::~Square()
 
 Square::Type Square::getType(){
     return t;
+}
+color::Color Square::getColor(){
+    return color::Color{r,g,b,a};
 }
