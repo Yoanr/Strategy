@@ -153,6 +153,7 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
         if (newPosition == TOWER1 || newPosition == TOWER2 || newPosition == TOWER3)
         {
             getCurrentPlayer().numberOfTowerCapturedIncremented();
+            getEnnemyPlayer().numberOfTowerCapturedDecremented();
         }
 
         return true;
