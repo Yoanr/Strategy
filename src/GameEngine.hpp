@@ -17,6 +17,7 @@ public:
     pair<int, int> getPossibleArmy(pair<int, int> position);
     pair<int,int> getSelectedSquare();
     int getCurrentIdPlayer();
+    int getEnnemyIdPlayer();
     bool isNotEnnemySpawn(pair<int, int> position);
     void setSelectedSquare(pair<int, int>);
     bool getHasWon();
@@ -51,7 +52,6 @@ private:
     void moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
     void manageEndOfRound();
-    int getEnnemyIdPlayer();
     int getCurrentRound();
     void checkTowers();
 };

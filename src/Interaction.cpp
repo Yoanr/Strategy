@@ -21,7 +21,7 @@ void Interaction::render()
         }
     }
     if(gameEngine.getHasWon()){
-        Draw::getInstance().victory(gameEngine.getCurrentIdPlayer());
+        Draw::getInstance().victory(gameEngine.getEnnemyIdPlayer());
     }
 }
 
