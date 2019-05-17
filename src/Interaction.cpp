@@ -80,8 +80,11 @@ bool Interaction::checkSecondClick(pair<int,int>  position)
         return false;
     }
 
-    if (oldIndexes == newIndexes) // Army ?
+    if (oldIndexes == newIndexes) // same square ? + reset move
     {
+        alreadyClicked = false;
+        setSelectedSquare(newIndexes, false);
+        gameEngine.getSquare(newIndexes).setA(1);
         return false;
     }
 
@@ -99,7 +102,7 @@ bool Interaction::checkSecondClick(pair<int,int>  position)
 
 void Interaction::setSelectedSquare(pair<int, int> position, bool isSelected)
 {
-    gameEngine.getSquare(position).setA(isSelected ? 0.8 : 1);
+    gameEngine.getSquare(position).setA(isSelected ? 0.3 : 1);
 }
 
 void Interaction::onMousePlay(pair<int, int> pMouse)
@@ -166,7 +169,7 @@ void Interaction::idle()
 {
     Draw::getInstance();
     S2D_Window *windowGiven = S2D_CreateWindow(
-            "Game", 1000, 700, nullptr, nullptr, 0);
+            "Game", 800, 555, nullptr, nullptr, 0);
     window = windowGiven;
 
     window->on_mouse = Lambda::make_function_ptr([this](S2D_Event event) { onMouse(event); });

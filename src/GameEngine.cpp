@@ -132,7 +132,7 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 
     while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
         int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
-        sleep(1);
+        //sleep(1);
         int rand = generateNumber0into100();
         std::cout << "rand: " << rand << std::endl;
         if ( rand < proportion * armyPowerCurrentPlayer){
