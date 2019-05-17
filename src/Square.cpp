@@ -1,4 +1,5 @@
 #include "Square.hpp"
+#include "Config.hpp"
 
 Square::Square(Type typeGiven) : t(typeGiven)
 {
@@ -10,6 +11,20 @@ Square::Square(Type typeGiven) : t(typeGiven)
             b = 0;
             a = 1;
             break;
+        case Square::Type::bomb:
+        if(Config::PRINTBOMB){
+            r = 1;
+            g = 1;
+            b = 0;
+            a = 1;
+        }else{
+            r = 1;
+            g = 1;
+            b = 1;
+            a = 1;
+        }
+        break;
+
         default:
             r = 1;
             g = 1;
@@ -46,6 +61,10 @@ void Square::setA(float aGiven){
     a = aGiven;
 }
 
+void Square::setType(Type tGiven){
+    t = tGiven;
+}
+
 void Square::setColor(color::Color color){
     r=color.r;
     g=color.g;
@@ -59,4 +78,7 @@ Square::~Square()
 
 Square::Type Square::getType(){
     return t;
+}
+color::Color Square::getColor(){
+    return color::Color{r,g,b,a};
 }

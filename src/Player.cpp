@@ -18,14 +18,6 @@ Player::Player(int idGiven) : id(idGiven){
             break;
     }
 }
-void Player::addArmy(const pair<int, int> position, int powerArmy)
-{
-    if(isArmy(position)){
-        army[position] =  getArmyPower(position) + powerArmy;
-    }else{
-        army.insert(pair<pair<int, int>, int>(position, powerArmy));
-    }
-}
 
 void Player::changeArmy(const pair<int, int> position, int powerArmy)
 {
@@ -35,13 +27,32 @@ void Player::changeArmy(const pair<int, int> position, int powerArmy)
     }
 }
 
-void Player::moveArmy(const pair<int, int> newPosition, int armyPower)
+void Player::moveOrMergeArmy(const pair<int, int> position, int armyPower)
 {
-    addArmy(newPosition, armyPower);
+    if (isArmy(position)){
+        army[position] = getArmyPower(position) + armyPower;
+    }else{
+        army.insert(pair<pair<int, int>, int>(position, armyPower));
+    }
 }
+
+void Player::moveArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition)
+{
+    int armyPower = getArmyPower(oldPosition);
+    deleteArmy(oldPosition);
+    army.insert(pair<pair<int, int>, int>(newPosition, armyPower));
+}
+
 void Player::deleteArmy(const pair<int, int> position)
 {
     army.erase(position);
+}
+
+void Player::mergeArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition)
+{
+    int armyPower = getArmyPower(oldPosition);
+    deleteArmy(oldPosition);
+    army[newPosition] = getArmyPower(newPosition) + armyPower;
 }
 
 int Player::getArmySize(){
@@ -57,7 +68,7 @@ bool Player::isArmy(const pair<int, int> position)
 
 int Player::getArmyPower(const pair<int, int> position)
 {
-    return army.find(position)->second;
+    return army[position];
 }
 
 int Player::getId(){
@@ -66,4 +77,16 @@ int Player::getId(){
 
 Player::~Player()
 {
+}
+
+int Player::getNumberOfTowerCaptured(){
+    return numberOfTowerCaptured;
+}
+void Player::numberOfTowerCapturedIncremented()
+{
+    numberOfTowerCaptured++;
+}
+void Player::numberOfTowerCapturedDecremented()
+{
+    numberOfTowerCaptured--;
 }

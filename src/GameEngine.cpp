@@ -1,33 +1,39 @@
 #include "GameEngine.hpp"
+#include <unistd.h>
 
 int GameEngine::generateNumber0into100(){
-    srand(time(NULL));
     return rand() % 100 + 0;
 }
-GameEngine::GameEngine(){
-    player1.addArmy(SPAWNP1, 1);
-    for (int i = 0; i < GRIDSIZE; i++)
-    {
-        for (int j = 0; j < GRIDSIZE; j++)
-        {
+
+int GameEngine::getProbaBomb(Config::Level level){
+    return level*15;
+}
+
+GameEngine::GameEngine() {
+    srand(time(NULL));
+
+    player1.moveOrMergeArmy(SPAWNP1, 1);
+
+    for (int i = 0; i < GRIDSIZE; i++) {
+        for (int j = 0; j < GRIDSIZE; j++) {
             pair<int, int> ij = pair<int, int>(i, j);
             Square::Type currentType = Square::Type::basic;
 
-            if ((i == TOWER1.first && j == TOWER1.second) || (i == TOWER2.first && j == TOWER2.second) || (i == TOWER3.first && j == TOWER3.second))
-            {
+            if ((i == TOWER1.first && j == TOWER1.second) || (i == TOWER2.first && j == TOWER2.second) ||
+                (i == TOWER3.first && j == TOWER3.second)) {
                 currentType = Square::Type::tower;
-            }
-            else if (i == SPAWNP1.first && j == SPAWNP1.second){
+            } else if (i == SPAWNP1.first && j == SPAWNP1.second) {
                 currentType = Square::Type::spawn1;
-            }
-            else if((i == SPAWNP2.first && j == SPAWNP2.second)){
-                currentType = Square::Type::spawn2 ;
-            }
-            else if (generateNumber0into100() < PROBABOMB && ((i != SPAWNP1.first && j != SPAWNP1.second)))
-            {
+            } else if ((i == SPAWNP2.first && j == SPAWNP2.second)) {
+                currentType = Square::Type::spawn2;
+            } else if (generateNumber0into100() < getProbaBomb(Config::DIFFICULTY) &&
+                       getSquare(pair<int, int>(i - 1, j)).getType() != Square::Type::bomb &&
+                       getSquare(pair<int, int>(i, j - 1)).getType() != Square::Type::bomb) {
+
                 currentType = Square::Type::bomb;
             }
-            board.insert(pair<pair<int, int>, Square>(ij, Square(currentType)));
+
+            board.insert(pair < pair < int, int > , Square > (ij, Square(currentType)));
         }
     }
 }
@@ -55,6 +61,11 @@ int GameEngine::getCurrentIdPlayer(){
     return currentPlayerId;
 }
 
+int GameEngine::getEnnemyIdPlayer()
+{
+    return getEnnemyPlayer().getId();
+}
+
 bool GameEngine::armyPresent(pair<int, int> indexes)
 {
     bool b = getCurrentPlayer().isArmy(indexes);
@@ -71,13 +82,24 @@ void GameEngine::resetSelectedSquare()
     selectedSquareIndexes = pair<int,int>(-1,-1);
 }
 
-void GameEngine::switchCurrentPlayerId(){
+bool GameEngine::getHasWon(){
+    return hasWon;
+}
+void GameEngine::setHasWon(bool hasWonGiven){
+    hasWon = hasWonGiven;
+}
+void GameEngine::manageEndOfRound(){
+    if (getCurrentPlayer().getNumberOfTowerCaptured() == 3)
+    {
+        hasWon = true;
+    }
+
     if(currentPlayerId == 1){
         currentPlayerId = 2;
-        player2.addArmy(SPAWNP2, 1);
+        player2.moveOrMergeArmy(SPAWNP2, 1);
     }else {
         currentPlayerId = 1;
-        player1.addArmy(SPAWNP1, 1);
+        player1.moveOrMergeArmy(SPAWNP1, 1);
         currentRound++;
     }
 }
@@ -102,20 +124,11 @@ Player& GameEngine::getEnnemyPlayer()
     }
 }
 
-void GameEngine::moveOrMergePlayerArmy(const pair<int, int> oldPosition, const pair<int, int> newPosition) {
-    int armyPower = getCurrentPlayer().getArmyPower(oldPosition);
-    getCurrentPlayer().deleteArmy(oldPosition);
+bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition, Player& Ennemyplayer){
 
-    getCurrentPlayer().addArmy(newPosition, armyPower);
-}
-#include <unistd.h>
-
-void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newPosition){
-    
     int armyPowerCurrentPlayer = getCurrentPlayer().getArmyPower(oldPosition);
-    getCurrentPlayer().deleteArmy(oldPosition);
 
-    int armyPowerEnnemyPlayer = getEnnemyPlayer().getArmyPower(newPosition);
+    int armyPowerEnnemyPlayer = Ennemyplayer.getArmyPower(newPosition);
 
     while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
         int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
@@ -131,17 +144,106 @@ void GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
         }
         std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
     }
-    
+
     if (armyPowerCurrentPlayer>0){
-        getCurrentPlayer().addArmy(newPosition, armyPowerCurrentPlayer);
-        getEnnemyPlayer().deleteArmy(newPosition);
+        getCurrentPlayer().moveArmy(oldPosition, newPosition);
+        getCurrentPlayer().changeArmy(newPosition, armyPowerCurrentPlayer);
+        Ennemyplayer.deleteArmy(newPosition);
+
+        if (newPosition == TOWER1 || newPosition == TOWER2 || newPosition == TOWER3)
+        {
+            getCurrentPlayer().numberOfTowerCapturedIncremented();
+        }
+
+        return true;
     }else{
-        getEnnemyPlayer().changeArmy(newPosition,armyPowerEnnemyPlayer);
+        getCurrentPlayer().deleteArmy(oldPosition);
+        Ennemyplayer.changeArmy(newPosition, armyPowerEnnemyPlayer);
+        return false;
+    }
+}
+
+void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
+    cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
+    Player bomb(3); // create virtual ennemy
+    bomb.moveOrMergeArmy(newPosition, getCurrentPlayer().getArmyPower(oldPosition));
+    if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
+        getSquare(newPosition).setType(Square::Type::basic);
     }
 }
 
 int GameEngine::getCurrentRound(){
     return currentRound;
+}
+
+bool GameEngine::isNotEnnemySpawn(pair<int, int> position){
+    if(currentPlayerId == 1){
+        return  (SPAWNP2 == position);
+    }else{
+        return (SPAWNP1 == position);
+    }
+}
+
+void GameEngine::play(pair<int, int> oldPosition, pair<int, int> newPosition){
+    resetSelectedSquare();
+    getSquare(oldPosition).setA(1);
+
+    pair<int, int> possibleArmy = getPossibleArmy(newPosition);
+    int idPossiblePlayerArmy = possibleArmy.first;
+    //Set color
+    if (getSquare(oldPosition).getType() == Square::Type::basic || getSquare(oldPosition).getType() == Square::Type::spawn1 || getSquare(oldPosition).getType() == Square::Type::spawn2)
+    {
+        getSquare(oldPosition).setColor(color::white); //Todo method type -> color
+    }
+    else if (getSquare(oldPosition).getType() == Square::Type::tower)
+    {
+        getSquare(oldPosition).setColor(color::green);
+    }
+
+
+    if (idPossiblePlayerArmy == 0)
+    {
+        if(getSquare(newPosition).getType() == Square::Type::bomb){
+            moveToBomb(oldPosition, newPosition);
+        } else{
+            getCurrentPlayer().moveArmy(oldPosition, newPosition);
+
+            if (getSquare(newPosition).getType() == Square::Type::tower)
+            {
+                getCurrentPlayer().numberOfTowerCapturedIncremented();
+            }
+        }
+    }
+    else if (idPossiblePlayerArmy == getCurrentIdPlayer())
+    {
+        getCurrentPlayer().mergeArmy(oldPosition, newPosition);
+    }
+    else if (idPossiblePlayerArmy == getEnnemyIdPlayer())
+    {
+        fightPlayerArmy(oldPosition, newPosition, getEnnemyPlayer());
+    }
+
+    //Update tower captured
+    if (getSquare(oldPosition).getType() == Square::Type::tower)
+    {
+        getCurrentPlayer().numberOfTowerCapturedDecremented();
+    }
+        manageEndOfRound();
+}
+
+
+void GameEngine::setColorSquareByPlayer(pair<int, int> position, int idPlayer)
+{
+    switch (idPlayer)
+    {
+        case 1:
+            getSquare(position).setColor(color::red);
+            break;
+
+        case 2:
+            getSquare(position).setColor(color::blue);
+            break;
+    }
 }
 
 pair<int, int> GameEngine::getSelectedSquare()
@@ -151,4 +253,5 @@ pair<int, int> GameEngine::getSelectedSquare()
 
 GameEngine::~GameEngine()
 {
+    
 }

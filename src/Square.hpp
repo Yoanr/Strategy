@@ -22,12 +22,14 @@ public:
     float getG();
     float getB();
     float getA();
+    color::Color getColor();
 
     void setR(float r);
     void setG(float g);
     void setB(float b);
     void setA(float a);
     void setColor(color::Color color);
+    void setType(Type t);
 
 private:
     float r;
