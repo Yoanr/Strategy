@@ -1,5 +1,5 @@
 #include "Draw.hpp"
-#include "simple2d.h"
+#include "../inc/simple2d.h"
 #include <iostream>
 #include "Config.hpp"
 

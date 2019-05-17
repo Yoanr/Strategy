@@ -10,8 +10,10 @@ int GameEngine::getProbaBomb(Config::Level level){
 }
 
 GameEngine::GameEngine() {
+#ifdef _WIN32
+#else
     srand(time(NULL));
-
+#endif
     player1.moveOrMergeArmy(SPAWNP1, 1);
 
     for (int i = 0; i < GRIDSIZE; i++) {

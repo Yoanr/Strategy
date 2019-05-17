@@ -6,7 +6,6 @@
 #include "Config.hpp"
 
 
-
 void Interaction::render()
 {
     for (int i = 0; i < Config::NUMBEROFSQUARE; i++)

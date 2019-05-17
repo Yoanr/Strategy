@@ -1,7 +1,7 @@
 #ifndef Interaction_H
 #define Interaction_H
 
-#include <simple2d.h>
+#include "../inc/simple2d.h"
 #include "GameEngine.hpp"
 #include "color.hpp"
 
