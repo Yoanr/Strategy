@@ -19,7 +19,7 @@ public:
     static const int LINEWIDTH{2};
     static const Level DIFFICULTY{normal};
     static const bool SQUAREUGLY{true};
-    static const bool PRINTBOMB{true};
+    static const bool PRINTBOMB{false};
 };
 
 #endif

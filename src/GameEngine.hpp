@@ -24,6 +24,9 @@ public:
     void setHasWon(bool hasWonGiven); // cheatcode
     void play(pair<int, int> oldPosition, pair<int, int> newPosition);
     void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
+    pair<int,int> getNbrOfBombHitted();
+    pair<int,int> getTotalPowerArmy();
+    int getCurrentRound();
 
 private:
     int getProbaBomb(Config::Level level);
@@ -52,7 +55,6 @@ private:
     void moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition);
     bool armyPresent(pair<int, int>);
     void manageEndOfRound();
-    int getCurrentRound();
     void checkTowers();
 };
 

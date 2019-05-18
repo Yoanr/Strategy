@@ -159,3 +159,15 @@ void Draw::square4Lines(int x1,int y1, int width, int length ,int linewidth,colo
     line(x1w, y1l, x1, y1l, linewidth, color);
     line(x1, y1l, x1, y1, linewidth, color);
 }
+
+void Draw::showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal,int currentPlayerId)
+{
+    string const strRound(string("Round ") + to_string(round) + string(" ,Player ")+ to_string(currentPlayerId));
+    text(strRound, 20, color::white, 560, 265);
+
+    string const strInfoP1(string("ArmyPower:") + to_string(armyPowerTotal.first)+string(" , BombHitted:")+to_string(bombHit.first));
+    text(strInfoP1, 10, color::white, 560, 10);
+
+    string const strInfoP2(string("ArmyPower:") + to_string(armyPowerTotal.second) + string(" , BombHitted:") + to_string(bombHit.second));
+    text(strInfoP2, 10, color::white, 560, 500);
+}

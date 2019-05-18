@@ -24,6 +24,10 @@ public:
     int getNumberOfTowerCaptured();
     void numberOfTowerCapturedIncremented();
     void numberOfTowerCapturedDecremented();
+    int getTotalPowerArmy();
+
+    void numberOfBombHitedIncremented();
+    int getNumberofBombHitted();
 
 private:
     int id;
@@ -33,6 +37,7 @@ private:
     float a;
     map<pair<int, int>, int> army;
     int numberOfTowerCaptured{0};
+    int numberOfBombHited{0};
 };
 
 #endif

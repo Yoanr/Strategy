@@ -21,6 +21,8 @@ public:
     void armyPower(int armyPower);
     void victory(int idPlayer);
 
+    void showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal,int currentPlayerId);
+    void showFight();
 
 private:
     Draw() = default;

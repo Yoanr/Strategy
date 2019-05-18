@@ -167,12 +167,22 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 }
 
 void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
+    getCurrentPlayer().numberOfBombHitedIncremented();
     cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
     Player bomb(3); // create virtual ennemy
     bomb.moveOrMergeArmy(newPosition, getCurrentPlayer().getArmyPower(oldPosition));
     if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
         getSquare(newPosition).setType(Square::Type::basic);
     }
+}
+
+pair<int, int> GameEngine::getNbrOfBombHitted(){
+    return pair<int,int>(player1.getNumberofBombHitted(),player2.getNumberofBombHitted());
+}
+
+pair<int, int> GameEngine::getTotalPowerArmy()
+{
+    return pair<int, int>(player1.getTotalPowerArmy(), player2.getTotalPowerArmy());
 }
 
 int GameEngine::getCurrentRound(){

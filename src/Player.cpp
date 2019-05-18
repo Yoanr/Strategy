@@ -90,3 +90,18 @@ void Player::numberOfTowerCapturedDecremented()
 {
     numberOfTowerCaptured--;
 }
+
+void Player::numberOfBombHitedIncremented(){
+    numberOfBombHited++;
+}
+int Player::getNumberofBombHitted(){
+    return numberOfBombHited;
+}
+
+int Player::getTotalPowerArmy(){
+    int totalPowerArmy{0};
+    for (map<pair<int, int>, int>::iterator it = army.begin(); it != army.end();++it){
+        totalPowerArmy=+it->second;
+    }
+    return totalPowerArmy;
+}

@@ -19,6 +19,8 @@ void Interaction::render()
             drawPossibleArmy(position);
         }
     }
+    Draw::getInstance().showInfo(gameEngine.getCurrentRound(), gameEngine.getNbrOfBombHitted(),gameEngine.getTotalPowerArmy(),gameEngine.getCurrentIdPlayer());
+    
     if(gameEngine.getHasWon()){
         Draw::getInstance().victory(gameEngine.getEnnemyIdPlayer());
     }
