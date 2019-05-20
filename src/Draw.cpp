@@ -8,6 +8,30 @@ Draw& Draw::getInstance(){
     static Draw instance;
     return instance;
 }
+
+void Draw::render(GameEngine &gameEngine)
+{
+    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
+    {
+        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
+        {
+            pair<int, int> position(i, j);
+            setPosition(position);
+
+            field(position, gameEngine);
+        }
+    }
+    showInfo(gameEngine.getCurrentRound(), gameEngine.getNbrOfBombHitted(), gameEngine.getTotalPowerArmy(), gameEngine.getCurrentIdPlayer());
+
+    if (gameEngine.getHasWon())
+    {
+        victory(gameEngine.getEnnemyIdPlayer());
+    }
+}
+
+
+
+
 void Draw::setPosition(pair<int,int> positionGiven){
 position = positionGiven;
 }
@@ -45,7 +69,7 @@ void Draw::D2Lines(color::Color color)
     line(l2x, l3y, l1x, l3y, Config::LINEWIDTH, color);
 }
 
-void Draw::square(Square square)
+void Draw::square(Square squareGiven)
 {
     if(Config::SQUAREUGLY){
         int x1 = position.first * Config::SQUARESIZE + Config::LINEWIDTH;
@@ -57,19 +81,18 @@ void Draw::square(Square square)
         int x4 = x1 + Config::LINEWIDTH;
         int y4 = y3 - Config::LINEWIDTH;
 
-        S2D_DrawQuad(x1, y1, square.getR(), square.getG(), square.getB(), square.getA(),
-                 x2, y2, square.getR(), square.getG(), square.getB(), square.getA(),
-                 x3, y3, square.getR(), square.getG(), square.getB(), square.getA(),
-                 x4, y4, square.getR(), square.getG(), square.getB(), square.getA());
+        S2D_DrawQuad(x1, y1, squareGiven.getR(), squareGiven.getG(), squareGiven.getB(), squareGiven.getA(),
+                     x2, y2, squareGiven.getR(), squareGiven.getG(), squareGiven.getB(), squareGiven.getA(),
+                     x3, y3, squareGiven.getR(), squareGiven.getG(), squareGiven.getB(), squareGiven.getA(),
+                     x4, y4, squareGiven.getR(), squareGiven.getG(), squareGiven.getB(), squareGiven.getA());
     }else {
         int x1 = position.first * Config::SQUARESIZE + Config::LINEWIDTH;
         int y1 = position.second * Config::SQUARESIZE + Config::LINEWIDTH;
 
-        squar(x1, y1, Config::SQUARESIZE - Config::LINEWIDTH, square.getColor());
+        square(x1, y1, Config::SQUARESIZE - Config::LINEWIDTH, squareGiven.getColor());
     }
    
-
-    switch (square.getType())
+    switch (squareGiven.getType())
     {
 
         case Square::Type::spawn1:
@@ -108,7 +131,7 @@ void Draw::rectangle(int x1, int y1, int width, int length, color::Color c){
                  x1 + width, y1 + length, c.r, c.g, c.b, c.a,
                  x1, y1 + length, c.r, c.g, c.b, c.a);
 }
-void Draw::squar(int x1, int y1, int width, color::Color color){
+void Draw::square(int x1, int y1, int width, color::Color color){
     rectangle(x1,y1,width,width,color);
 }
 
@@ -172,42 +195,22 @@ void Draw::showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerT
     text(strInfoP2, 10, color::white, 560, 500);
 }
 
-void Draw::render(GameEngine& gameEngine)
-{
-    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
-    {
-        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
-        {
-            pair<int, int> position(i, j);
-            Draw::getInstance().setPosition(position);
-
-            field(position,gameEngine);
-            possibleArmy(position,gameEngine);
-        }
-    }
-    Draw::getInstance().showInfo(gameEngine.getCurrentRound(), gameEngine.getNbrOfBombHitted(), gameEngine.getTotalPowerArmy(), gameEngine.getCurrentIdPlayer());
-
-    if (gameEngine.getHasWon())
-    {
-        Draw::getInstance().victory(gameEngine.getEnnemyIdPlayer());
-    }
-}
-
 void Draw::field(pair<int, int> position, GameEngine& gameEngine)
 {
-    Draw::getInstance().D2Lines(color::black); //Black color
-    Draw::getInstance().square(gameEngine.getSquare(position));
+    D2Lines(color::black); //Black color
+    square(gameEngine.getSquare(position));
+    possibleArmy(position, gameEngine);
 }
 
 void Draw::possibleArmy(pair<int, int> position, GameEngine& gameEngine)
 {
     pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
     int playerId = p.first;
-    int armyPower = p.second;
+    int armyLocalPower = p.second;
 
-    if (not armyPower == 0)
+    if (not armyLocalPower == 0)
     {
         gameEngine.setColorSquareByPlayer(position, playerId);
-        Draw::getInstance().armyPower(armyPower);
+        armyPower(armyLocalPower);
     }
 }
