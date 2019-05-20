@@ -21,6 +21,7 @@ public:
     bool isArmy(const pair<int, int> position);
     int getArmyPower(const pair<int, int> position);
     int getArmySize();
+    map<pair<int, int>, int>& getArmy();
     int getNumberOfTowerCaptured();
     void numberOfTowerCapturedIncremented();
     void numberOfTowerCapturedDecremented();
@@ -28,6 +29,8 @@ public:
 
     void numberOfBombHitedIncremented();
     int getNumberofBombHitted();
+
+    pair<int,int> getPositionByIndex(int index);
 
 private:
     int id;

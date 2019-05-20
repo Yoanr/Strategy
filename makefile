@@ -1,11 +1,11 @@
 CC = g++
 MINGW = i686-w64-mingw32-g++
 CFLAGS = -Wall -Werror -pedantic -Wextra -std=c++14
-EXEC_NAME = bin/warY
+EXEC_NAME = bin/strategy
 EXEC_WINDOWS = main.exe
 INCLUDES = `simple2d --libs`
 LIBS =
-SRC_FILES = src/main.cpp src/Interaction.cpp src/GameEngine.cpp src/Square.cpp src/Player.cpp src/Draw.cpp
+SRC_FILES = src/main.cpp src/Interaction.cpp src/GameEngine.cpp src/Square.cpp src/Player.cpp src/Draw.cpp src/Bot.cpp
 INSTALL_DIR = /usr/bin
 
 all :

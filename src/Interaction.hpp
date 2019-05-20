@@ -4,6 +4,7 @@
 #include "../inc/simple2d.h"
 #include "GameEngine.hpp"
 #include "color.hpp"
+#include "Bot.hpp"
 
 using namespace std;
 class Interaction {
@@ -17,6 +18,7 @@ public:
 private:
     S2D_Window *window;
     GameEngine gameEngine;
+    Bot bot{gameEngine};
     bool alreadyClicked{false};
     bool wantToReplay{false};
 

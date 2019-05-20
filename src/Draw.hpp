@@ -4,7 +4,6 @@
 #include "Square.hpp"
 #include "color.hpp"
 #include <iostream>
-using namespace std;
 
 
 using namespace std;

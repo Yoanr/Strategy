@@ -28,6 +28,9 @@ public:
     pair<int,int> getTotalPowerArmy();
     int getCurrentRound();
 
+    Player &getCurrentPlayer();
+    Player &getEnnemyPlayer();
+
 private:
     int getProbaBomb(Config::Level level);
     int hasWon{false};
@@ -45,8 +48,6 @@ private:
     pair<int, int> selectedSquareIndexes{-1, -1};
     Player player1{1};
     Player player2{2};
-    Player& getCurrentPlayer();
-    Player& getEnnemyPlayer();
     int currentPlayerId{1};
     int currentRound{1};
 

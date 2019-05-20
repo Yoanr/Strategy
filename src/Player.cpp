@@ -71,6 +71,22 @@ int Player::getArmyPower(const pair<int, int> position)
     return army[position];
 }
 
+map<pair<int, int>, int>& Player::getArmy(){
+    return army;
+}
+
+pair<int, int> Player::getPositionByIndex(int index){
+    int tmpIndex{0};
+    for (map<pair<int, int>, int>::iterator it = army.begin(); it != army.end(); ++it)
+    {
+        if(tmpIndex == index){
+            return it->first;
+        }
+        tmpIndex++;
+    }
+    return pair<int,int>(-1,-1);
+}
+
 int Player::getId(){
     return id;
 }

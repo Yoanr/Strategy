@@ -18,8 +18,9 @@ public:
     static const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
     static const int LINEWIDTH{2};
     static const Level DIFFICULTY{normal};
-    static const bool SQUAREUGLY{true};
-    static const bool PRINTBOMB{false};
+    static const bool SQUAREUGLY{false};
+    static const bool PRINTBOMB{true};
+    static const bool AI{true};
 };
 
 #endif

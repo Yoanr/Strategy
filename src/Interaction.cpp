@@ -117,6 +117,13 @@ void Interaction::onMousePlay(pair<int, int> pMouse)
             gameEngine.play(oldIndexes, newIndexes);
 
             alreadyClicked = false;
+
+            if (Config::AI && not (gameEngine.getHasWon()))
+            {
+                pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
+                gameEngine.play(pair.first, pair.second);
+            }
+
         }
     }
     else
