@@ -171,3 +171,43 @@ void Draw::showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerT
     string const strInfoP2(string("ArmyPower:") + to_string(armyPowerTotal.second) + string(" , BombHitted:") + to_string(bombHit.second));
     text(strInfoP2, 10, color::white, 560, 500);
 }
+
+void Draw::render(GameEngine& gameEngine)
+{
+    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
+    {
+        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
+        {
+            pair<int, int> position(i, j);
+            Draw::getInstance().setPosition(position);
+
+            field(position,gameEngine);
+            possibleArmy(position,gameEngine);
+        }
+    }
+    Draw::getInstance().showInfo(gameEngine.getCurrentRound(), gameEngine.getNbrOfBombHitted(), gameEngine.getTotalPowerArmy(), gameEngine.getCurrentIdPlayer());
+
+    if (gameEngine.getHasWon())
+    {
+        Draw::getInstance().victory(gameEngine.getEnnemyIdPlayer());
+    }
+}
+
+void Draw::field(pair<int, int> position, GameEngine& gameEngine)
+{
+    Draw::getInstance().D2Lines(color::black); //Black color
+    Draw::getInstance().square(gameEngine.getSquare(position));
+}
+
+void Draw::possibleArmy(pair<int, int> position, GameEngine& gameEngine)
+{
+    pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
+    int playerId = p.first;
+    int armyPower = p.second;
+
+    if (not armyPower == 0)
+    {
+        gameEngine.setColorSquareByPlayer(position, playerId);
+        Draw::getInstance().armyPower(armyPower);
+    }
+}

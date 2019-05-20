@@ -6,44 +6,6 @@
 #include "Config.hpp"
 
 
-void Interaction::render()
-{
-    for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
-    {
-        for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
-        {
-            pair<int, int> position(i, j);
-            Draw::getInstance().setPosition(position);
-
-            drawField(position);
-            drawPossibleArmy(position);
-        }
-    }
-    Draw::getInstance().showInfo(gameEngine.getCurrentRound(), gameEngine.getNbrOfBombHitted(),gameEngine.getTotalPowerArmy(),gameEngine.getCurrentIdPlayer());
-    
-    if(gameEngine.getHasWon()){
-        Draw::getInstance().victory(gameEngine.getEnnemyIdPlayer());
-    }
-}
-
-void Interaction::drawField(pair<int, int> position)
-{
-    Draw::getInstance().D2Lines(color::black); //Black color
-    Draw::getInstance().square(gameEngine.getSquare(position));
-}
-
-void Interaction::drawPossibleArmy(pair<int, int> position)
-{
-    pair<int, int> p = gameEngine.getPossibleArmy(position); // <,>
-    int playerId = p.first;
-    int armyPower = p.second;
-
-    if (not armyPower == 0)
-    {
-        gameEngine.setColorSquareByPlayer(position,playerId);
-        Draw::getInstance().armyPower(armyPower);
-    }
-}
 
 
 pair<int, int> Interaction::getIndexByMousePosition(pair<int,int> position){
@@ -148,7 +110,6 @@ void Interaction::onMouse(S2D_Event e)
         }else{
             onMouseHasWon(pMouse);
         }
-            
             break;
     }
 }
@@ -181,7 +142,7 @@ void Interaction::idle()
     window = windowGiven;
 
     window->on_mouse = Lambda::make_function_ptr([this](S2D_Event event) { onMouse(event); });
-    window->render = Lambda::make_function_ptr([this]() { render(); });
+    window->render = Lambda::make_function_ptr([this]() { Draw::getInstance().render(gameEngine); });
 
     S2D_Show(window);
 }

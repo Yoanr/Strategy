@@ -25,9 +25,6 @@ private:
     void onMouse(S2D_Event e);
     void onMousePlay(pair<int, int> pMouse);
     void onMouseHasWon(pair<int, int> pMouse);
-    void render();
-    void drawField(pair<int, int> position);
-    void drawPossibleArmy(pair<int, int> position);
     void setSelectedSquare(pair<int, int> position, bool isSelected);
     bool checkFirstClick(pair<int, int> positionClicked);
     bool checkSecondClick(pair<int, int> positionClicked);

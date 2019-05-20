@@ -4,6 +4,7 @@
 #include "Square.hpp"
 #include "color.hpp"
 #include <iostream>
+#include "GameEngine.hpp"
 
 
 using namespace std;
@@ -22,6 +23,10 @@ public:
 
     void showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal,int currentPlayerId);
     void showFight();
+
+    void render(GameEngine& gameEngine);
+    void field(pair<int, int> position, GameEngine& gameEngine);
+    void possibleArmy(pair<int, int> position, GameEngine& gameEngine);
 
 private:
     Draw() = default;
