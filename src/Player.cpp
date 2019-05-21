@@ -117,7 +117,7 @@ int Player::getNumberofBombHitted(){
 int Player::getTotalPowerArmy(){
     int totalPowerArmy{0};
     for (map<pair<int, int>, int>::iterator it = army.begin(); it != army.end();++it){
-        totalPowerArmy=+it->second;
+        totalPowerArmy+=it->second;
     }
     return totalPowerArmy;
 }
