@@ -12,6 +12,7 @@ class GameEngine
 public:
     GameEngine();
     ~GameEngine();
+    GameEngine& operator=(const GameEngine& other); // TODO
 
     Square &getSquare(pair<int, int> position);
     pair<int, int> getPossibleArmy(pair<int, int> position);

@@ -1,5 +1,6 @@
 #include "Bot.hpp"
 #include <unistd.h>
+#include "Tree.hpp"
 
 Bot::Bot(GameEngine &gameEngineGiven) : gameEngine(gameEngineGiven)
 {
@@ -31,6 +32,7 @@ pair<int, int> Bot::getRandomOldPosition()
 
 pair<int, int> Bot::getRandomNewPosition(pair<int, int> oldPosition)
 {
+    Tree t;
     int randomNeighbours = rand() % 4 + 0;
     pair<int, int> newPosition;
     do
@@ -61,3 +63,19 @@ pair<int, int> Bot::getRandomNewPosition(pair<int, int> oldPosition)
     return newPosition;
 }
 
+/*
+function minimax(node, depth, maximizingPlayer) is
+    if depth = 0 or node is a terminal node then
+        return the heuristic value of node
+    if maximizingPlayer then
+        value := −∞
+        for each child of node do
+            value := max(value, minimax(child, depth − 1, FALSE))
+        return value
+    else (* minimizing player *)
+        value := +∞
+        for each child of node do
+            value := min(value, minimax(child, depth − 1, TRUE))
+        return value
+        
+*/
