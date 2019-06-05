@@ -28,9 +28,17 @@ public:
     pair<int,int> getNbrOfBombHitted();
     pair<int,int> getTotalPowerArmy();
     int getCurrentRound();
+    bool getHasLose();
 
     Player &getCurrentPlayer();
     Player &getEnnemyPlayer();
+
+    const pair<int, int> SPAWNP1{5, 0};
+    const pair<int, int> SPAWNP2{5, 10};
+
+    const pair<int, int> TOWER1{1, 5};
+    const pair<int, int> TOWER2{5, 5};
+    const pair<int, int> TOWER3{9, 5};
 
 private:
     int getProbaBomb(Config::Level level);
@@ -38,12 +46,6 @@ private:
     int generateNumber0into100();
     map<pair<int, int>, Square> board;
     const int GRIDSIZE = 12;
-    const pair<int, int> SPAWNP1{5, 0};
-    const pair<int, int> SPAWNP2{5, 10};
-
-    const pair<int, int> TOWER1{1, 5};
-    const pair<int, int> TOWER2{5, 5};
-    const pair<int, int> TOWER3{9, 5};
 
     int numberOfRound{0};
     pair<int, int> selectedSquareIndexes{-1, -1};

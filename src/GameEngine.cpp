@@ -87,6 +87,11 @@ void GameEngine::resetSelectedSquare()
 bool GameEngine::getHasWon(){
     return hasWon;
 }
+
+bool GameEngine::getHasLose()
+{
+    return (getEnnemyPlayer().getNumberOfTowerCaptured() == 3);
+}
 void GameEngine::setHasWon(bool hasWonGiven){
     hasWon = hasWonGiven;
 }
@@ -263,7 +268,6 @@ pair<int, int> GameEngine::getSelectedSquare()
 {
     return selectedSquareIndexes;
 }
-
 GameEngine::~GameEngine()
 {
     

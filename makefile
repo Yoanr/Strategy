@@ -5,7 +5,7 @@ EXEC_NAME = bin/strategy
 EXEC_WINDOWS = main.exe
 INCLUDES = `simple2d --libs`
 LIBS =
-SRC_FILES = src/main.cpp src/Interaction.cpp src/GameEngine.cpp src/Square.cpp src/Player.cpp src/Draw.cpp src/Bot.cpp src/Noeud.cpp src/Tree.cpp
+SRC_FILES = src/main.cpp src/Interaction.cpp src/GameEngine.cpp src/Square.cpp src/Player.cpp src/Draw.cpp src/Bot.cpp
 INSTALL_DIR = /usr/bin
 
 all :

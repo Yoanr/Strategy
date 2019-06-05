@@ -3,6 +3,8 @@
 
 #include "color.hpp"
 
+using namespace std;
+
 class Config
 {
 public:
@@ -21,6 +23,7 @@ public:
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{true};
     static const bool AI{true};
+    static const int DEPTH{3};
 };
 
 #endif
