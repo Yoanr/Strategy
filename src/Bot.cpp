@@ -10,9 +10,9 @@ Bot::Bot(GameEngine &gameEngineGiven) : gameEngine(gameEngineGiven)
 
 pair<pair<int, int>, pair<int, int>> Bot::getNextmove()
 {
-    auto oldPosition = getRandomOldPosition();
-
-    return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
+    //auto oldPosition = getRandomOldPosition();
+    //return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
+    return decisionMax(gameEngine);
 }
 
 bool Bot::verifyPlay(pair<int,int> position){
@@ -79,7 +79,6 @@ function minimax(node, depth, maximizingPlayer) is
         return value
 */
 pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
-    vector<pair<pair<int,int>,pair<int,int>>> coups;
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
     pair<pair<int,int>,pair<int,int>> bestAction;
     double valueMax = - numeric_limits<double>::infinity();
@@ -92,7 +91,7 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
             if (verifyPlay(newIndexes[j]))
             {
                 GameEngine *copy = new GameEngine();
-                *copy = gameEngine;
+                copy = &gameEngine;
                 double value = minMax(copy, false, Config::DEPTH);
 
                 if (value > valueMax)
@@ -108,10 +107,18 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
 
 double Bot::minMax(GameEngine* gameEngine,bool isMax,int depth)
 {
-    if (gameEngine->getHasWon() || depth == 0)
+    std::cout << " depth: " << depth << " isMax: " << isMax << " player: " << gameEngine->getCurrentIdPlayer() << endl;
+    if (gameEngine->getHasWon())
     {
-        return evalFunction(*gameEngine);
+        return numeric_limits<double>::infinity();
 
+    }
+    if(gameEngine->getHasLose()){
+        return -numeric_limits<double>::infinity();
+    }
+    if(depth == 0){
+        std::cout <<"F() : "<< evalFunction(*gameEngine) << std::endl;
+        return evalFunction(*gameEngine);
     }
     vector<double> vals;
     vector<pair<int, int>> oldIndexes = getOldPosition(*gameEngine);
@@ -131,7 +138,7 @@ double Bot::minMax(GameEngine* gameEngine,bool isMax,int depth)
     if(isMax){
         return *max_element(begin(vals), end(vals));
     }else{
-        return *min_element(vals.begin(), vals.end());
+        return *min_element(begin(vals), end(vals));
     }
 
 }
@@ -164,7 +171,8 @@ int Bot::getDistanceFromNearestTower(GameEngine gameEngine, pair<int,int> positi
     int xTower2 = abs(gameEngine.TOWER2.first - x);
     int xTower3 = abs(gameEngine.TOWER3.first - x);
     xMin = std::min(std::min(xTower1, xTower2), xTower3);
-    return xMin+yDistance;
+    std::cout << xMin+yDistance+1 << std::endl;
+    return xMin+yDistance+1;
 }
 
 

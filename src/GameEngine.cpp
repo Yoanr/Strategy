@@ -268,6 +268,16 @@ pair<int, int> GameEngine::getSelectedSquare()
 {
     return selectedSquareIndexes;
 }
+
+GameEngine& GameEngine::operator=(const GameEngine &other){
+    hasWon = other.hasWon;
+    numberOfRound = other.numberOfRound;
+    player1 = other.player1;
+    player2 = other.player2;
+    currentPlayerId = other.currentPlayerId;
+    currentRound = other.currentRound;
+return *this;
+}
 GameEngine::~GameEngine()
 {
     
