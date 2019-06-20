@@ -24,7 +24,7 @@ public:
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
     static const bool AI{true};
-    static const int DEPTH{4};
+    static const int DEPTH{2};
 };
 
 #endif

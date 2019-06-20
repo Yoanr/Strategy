@@ -32,11 +32,11 @@ pair<pair<int, int>, pair<int, int>> Bot::getNextmove()
 }
 
 bool Bot::verifyPlay(pair<int,int> position){
-    if (position.first < Config::NUMBEROFSQUARE && position.first >= 0 && position.second < Config::NUMBEROFSQUARE && position.second >= 0)
-    {
-        return true;
-    }
-    return false;
+    return
+    position.first < Config::NUMBEROFSQUARE &&
+    position.first >= 0 &&
+    position.second < Config::NUMBEROFSQUARE &&
+    position.second >= 0;
 }
 
 pair<int, int> Bot::getRandomOldPosition()
@@ -96,50 +96,58 @@ function minimax(node, depth, maximizingPlayer) is
 */
 pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
-     std::cout<< "ancien choix" << std::endl;
+    // std::cout<< "ancien choix" << std::endl;
     print(oldIndexes);
     pair<pair<int,int>,pair<int,int>> bestAction;
-    double valueMax = - numeric_limits<double>::infinity();
+    double valueMax =  numeric_limits<double>::infinity();
     for (std::size_t i = 0; i < oldIndexes.size(); i++)
     {
-        std::cout << "oldPosition" << oldIndexes[i].first << ',' << oldIndexes[i].second << std::endl;
+       // std::cout << "oldPosition" << oldIndexes[i].first << ',' << oldIndexes[i].second << std::endl;
         vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
         for (std::size_t j = 0; j < newIndexes.size(); j++)
         {
             if (verifyPlay(newIndexes[j]))
             {
-                std::cout<< "newPositon" << newIndexes[j].first <<',' << newIndexes[j].second << std::endl;
-                double value = minMax(gameEngine, false, Config::DEPTH);
+               // std::cout<< "newPositon " << newIndexes[j].first <<',' << newIndexes[j].second << std::endl;
+                GameEngine *copy = new GameEngine();
+                *copy = gameEngine;
+                copy->play(oldIndexes[i], newIndexes[j]);
 
-                if (value > valueMax)
+                double value = minMax(*copy, true, Config::DEPTH);
+                delete(copy);;
+
+                if (value < valueMax)
                 {
+                   // std::cout << "Here" << std::endl;
                     valueMax = value;
                     bestAction = pair<pair<int, int>, pair<int, int>>(oldIndexes[i], newIndexes[j]);
                 }
-                std::cout << "valueMax" << valueMax << std::endl;
+                // std::cout << "valueMax" << valueMax << std::endl;
+                // cout<<endl;
             }
+
         }
     }
-    std::cout << "(" << bestAction.first.first << ","<< bestAction.first.second << ")";
-    std::cout << "(" << bestAction.second.first << "," << bestAction.second.second << ")" << std::endl;
+    // std::cout << "(" << bestAction.first.first << ","<< bestAction.first.second << ")";
+    // std::cout << "(" << bestAction.second.first << "," << bestAction.second.second << ")" << std::endl;
     return bestAction;
 }
 
 double Bot::minMax(GameEngine gameEngine,bool isMax,int depth)
 {
-    std::cout << " depth: " << depth << " isMax: " << isMax << " player: " << gameEngine.getCurrentIdPlayer() << endl;
+
     if (gameEngine.getHasWon())
     {
-        std::cout << "Win node! " << std::endl;
+        //std::cout << "Win node! " << std::endl;
         return numeric_limits<double>::infinity();
 
     }
     if(gameEngine.getHasLose()){
-        std::cout << "Loose node! "<< std::endl;
+        //std::cout << "Loose node! "<< std::endl;
         return - numeric_limits<double>::infinity();
     }
     if(depth == 0){
-        std::cout <<"F() : "<< evalFunction(gameEngine) << " isMax: " << isMax <<  std::endl;
+        //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
         return evalFunction(gameEngine);
     }
     vector<double> vals;
@@ -161,10 +169,10 @@ double Bot::minMax(GameEngine gameEngine,bool isMax,int depth)
         }
     }
     if(isMax){
-        std::cout  << "max" << *max_element(begin(vals), end(vals)) << std::endl;
+        //std::cout  << "max" << *max_element(begin(vals), end(vals)) << std::endl;
         return *max_element(begin(vals), end(vals));
     }else{
-        std::cout << "min" << *min_element(begin(vals), end(vals)) << std::endl;
+        //std::cout << "min" << *min_element(begin(vals), end(vals)) << std::endl;
         return *min_element(begin(vals), end(vals));
     }
 
@@ -174,7 +182,7 @@ double Bot::evalFunction(GameEngine gameEngine){
     map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
     double currentSum=0,ennemySum=0;
 
-    for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); it1++)
+    for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); ++it1)
     {
         currentSum += (1.0 / getDistanceFromNearestTower(gameEngine, it1->first)) * static_cast<double>(it1->second);
     }
@@ -240,7 +248,7 @@ double Bot::minMax2(GameEngine gameEngine, bool isMax, int depth)
     }
     if (depth == 0)
     {
-        std::cout << "F() : " << evalFunction(gameEngine) << " isMax: " << isMax << std::endl;
+        //std::cout << "F() : " << evalFunction(gameEngine) << " isMax: " << isMax << std::endl;
         return evalFunction(gameEngine);
     }
     
