@@ -22,9 +22,9 @@ public:
     static const int LINEWIDTH{2};
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
-    static const bool PRINTBOMB{true};
+    static const bool PRINTBOMB{false};
     static const bool AI{true};
-    static const int DEPTH{1};
+    static const int DEPTH{4};
 };
 
 #endif
