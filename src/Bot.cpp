@@ -7,7 +7,7 @@ void print(std::vector<pair<int,int>> input)
 {
     for (unsigned int i = 0; i < input.size(); i++)
     {
-        std::cout << input.at(i).first << " " << input.at(i).second << std::endl;
+     //   std::cout << input.at(i).first << " " << input.at(i).second << std::endl;
     }
 }
 
@@ -15,7 +15,7 @@ void printd(std::vector<double> input)
 {
     for (unsigned int i = 0; i < input.size(); i++)
     {
-        std::cout << input.at(i) <<std::endl;
+     //   std::cout << input.at(i) <<std::endl;
     }
 }
 
@@ -99,7 +99,7 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
     // std::cout<< "ancien choix" << std::endl;
     print(oldIndexes);
     pair<pair<int,int>,pair<int,int>> bestAction;
-    double valueMax =  numeric_limits<double>::infinity();
+    double valeurMin =  numeric_limits<double>::infinity();
     for (std::size_t i = 0; i < oldIndexes.size(); i++)
     {
        // std::cout << "oldPosition" << oldIndexes[i].first << ',' << oldIndexes[i].second << std::endl;
@@ -116,10 +116,10 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
                 double value = minMax(*copy, true, Config::DEPTH);
                 delete(copy);;
 
-                if (value < valueMax)
+                if (value < valeurMin)
                 {
                    // std::cout << "Here" << std::endl;
-                    valueMax = value;
+                    valeurMin = value;
                     bestAction = pair<pair<int, int>, pair<int, int>>(oldIndexes[i], newIndexes[j]);
                 }
                 // std::cout << "valueMax" << valueMax << std::endl;
@@ -135,19 +135,19 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
 
 double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
 {
-    if (gameEngine.getHasWon())
+    /*if (gameEngine.getHasWon())
     {
-        //std::cout << "Win node! " << std::endl;
-        return numeric_limits<double>::infinity();
+        std::cout << "Win node! " << std::endl;
+        return - numeric_limits<double>::infinity();
 
     }
     if(gameEngine.getHasLose()){
         //std::cout << "Loose node! "<< std::endl;
-        return - numeric_limits<double>::infinity();
-    }
-    if(depth == 0){
+        return  numeric_limits<double>::infinity();
+    }*/
+    if(depth == 0 ||gameEngine.getHasLose() ||gameEngine.getHasWon()){
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
-        return evalFunction(gameEngine);
+        return evalFunction2(gameEngine);
     }
     vector<double> vals;
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
@@ -176,27 +176,9 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
     }
 
 }
-double Bot::evalFunction2(GameEngine& gameEngine)
-{
-    map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
-    map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
-    double currentSum = 0, ennemySum = 0;
 
-    for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); ++it1)
-    {
-        currentSum += (static_cast<double>(it1->second) / getDistanceFromNearestTower(gameEngine, it1->first));
-    }
-
-    for (map<pair<int, int>, int>::iterator it2 = ennemyArmy.begin(); it2 != ennemyArmy.end(); it2++)
-    {
-        ennemySum += (static_cast<double>(it2->second) / getDistanceFromNearestTower(gameEngine, it2->first));
-    }
-    return currentSum - ennemySum;
-}
-
-double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> position){
+double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> position, Player& player){
     double yFixed = 5;
-    double xMin = 10;
 
     double x = static_cast<double> (position.first);
     double y = static_cast<double> (position.second);
@@ -205,7 +187,29 @@ double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> po
     double xTower1 = abs(gameEngine.TOWER1.first - x);
     double xTower2 = abs(gameEngine.TOWER2.first - x);
     double xTower3 = abs(gameEngine.TOWER3.first - x);
-    xMin = std::min(std::min(xTower1, xTower2), xTower3);
+
+    //Check if the tower is already captured
+    bool checkTower1 = gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER1, player),
+         checkTower2 = gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER2, player),
+         checkTower3 = gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER3, player);
+
+    if(checkTower1){
+        xTower1 =  numeric_limits<double>::infinity();
+    }
+    if(checkTower2){
+        xTower2 =  numeric_limits<double>::infinity();
+    }
+    if(checkTower3){
+        xTower3 =  numeric_limits<double>::infinity();
+    }
+
+
+    double xMin = std::min(std::min(xTower1, xTower2), xTower3);
+
+    if(checkTower1 && checkTower2 && checkTower3){
+        xMin = 0;
+    }
+
     return xMin+yDistance+1;
 }
 
@@ -226,6 +230,26 @@ double Bot::evalFunction(GameEngine &gameEngine)
     }
     return currentSum - ennemySum;
 }
+
+double Bot::evalFunction2(GameEngine& gameEngine)
+{
+
+    map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
+    map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
+    double currentSum = 0, ennemySum = 0;
+
+    for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); ++it1)
+    {
+        currentSum +=gameEngine.getCurrentPlayer().getNumberOfTowerCaptured() +  (static_cast<double>(it1->second) / getDistanceFromNearestTower(gameEngine, it1->first, gameEngine.getCurrentPlayer()));
+    }
+
+    for (map<pair<int, int>, int>::iterator it2 = ennemyArmy.begin(); it2 != ennemyArmy.end(); it2++)
+    {
+        ennemySum += gameEngine.getEnnemyPlayer().getNumberOfTowerCaptured() + (static_cast<double>(it2->second) / getDistanceFromNearestTower(gameEngine, it2->first, gameEngine.getEnnemyPlayer()));
+    }
+    return currentSum - ennemySum;
+}
+
 
 double Bot::getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> position,Player& player)
 {

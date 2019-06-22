@@ -20,7 +20,7 @@ private:
     bool verifyPlay(pair<int, int> position);
     pair<int, int> getRandomOldPosition();
     pair<int, int> getRandomNewPosition(pair<int, int> oldPosition);
-    double getDistanceFromNearestTower(GameEngine& gameEngine, pair<int, int> position);
+    double getDistanceFromNearestTower(GameEngine& gameEngine, pair<int, int> position, Player &player);
     double getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> position, Player &player);
     double evalFunction(GameEngine& gameEngine);
     double evalFunction2(GameEngine &gameEngine);
