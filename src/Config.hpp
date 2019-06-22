@@ -16,6 +16,14 @@ public:
         expert  = 4
     };
 
+    enum mode
+    {
+        p1versusp2 = 0,
+        aiversusai = 1,
+        p1versusai = 2
+
+    };
+
     static const int SQUARESIZE{50};
     static const int NUMBEROFSQUARE{11};
     static const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
@@ -23,7 +31,7 @@ public:
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
-    static const bool AI{true};
+    static const mode MODE{p1versusp2};
     static const int DEPTH{2};
 };
 

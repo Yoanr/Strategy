@@ -80,7 +80,7 @@ void Interaction::onMousePlay(pair<int, int> pMouse)
 
             alreadyClicked = false;
 
-            if (Config::AI && not (gameEngine.getHasWon()))
+            if (Config::MODE == Config::mode::p1versusai && not(gameEngine.getHasWon()))
             {
                 pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
                 gameEngine.play(pair.first, pair.second);
@@ -105,12 +105,24 @@ void Interaction::onMouse(S2D_Event e)
     {
         case S2D_MOUSE_DOWN:
         if(not gameEngine.getHasWon()){
-            onMousePlay(pMouse);
+            if(Config::MODE == Config::mode::p1versusp2 || Config::MODE == Config::mode::p1versusai){
+                onMousePlay(pMouse);
+            }
+            else if (Config::MODE == Config::mode::aiversusai)
+            {
+                    onMouseBotPlay();
+                    onMouseBotPlay();
+            }
         }else{
             onMouseHasWon(pMouse);
         }
             break;
     }
+}
+
+void Interaction::onMouseBotPlay(){
+    pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
+    gameEngine.play(pair.first, pair.second);
 }
 
 void Interaction::onMouseHasWon(pair<int, int> pMouse)

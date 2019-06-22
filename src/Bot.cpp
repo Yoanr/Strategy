@@ -262,7 +262,7 @@ double Bot::getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> p
     {
         focusedTower = gameEngine.TOWER3;
     }
-    std::cout << "focusedTower: " << focusedTower.first << focusedTower.second << std::endl;
+    //std::cout << "focusedTower: " << focusedTower.first << focusedTower.second << std::endl;
 
     double yFixed = 5;
 
