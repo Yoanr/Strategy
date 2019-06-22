@@ -85,7 +85,6 @@ void Interaction::onMousePlay(pair<int, int> pMouse)
                 pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
                 gameEngine.play(pair.first, pair.second);
             }
-
         }
     }
     else

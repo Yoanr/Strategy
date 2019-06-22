@@ -94,7 +94,7 @@ function minimax(node, depth, maximizingPlayer) is
             value := min(value, minimax(child, depth − 1, TRUE))
         return value
 */
-pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
+pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
     // std::cout<< "ancien choix" << std::endl;
     print(oldIndexes);
@@ -133,9 +133,8 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine gameEngine){
     return bestAction;
 }
 
-double Bot::minMax(GameEngine gameEngine,bool isMax,int depth)
+double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
 {
-
     if (gameEngine.getHasWon())
     {
         //std::cout << "Win node! " << std::endl;
@@ -177,24 +176,25 @@ double Bot::minMax(GameEngine gameEngine,bool isMax,int depth)
     }
 
 }
-double Bot::evalFunction(GameEngine gameEngine){
+double Bot::evalFunction2(GameEngine& gameEngine)
+{
     map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
     map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
-    double currentSum=0,ennemySum=0;
+    double currentSum = 0, ennemySum = 0;
 
     for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); ++it1)
     {
-        currentSum += (1.0 / getDistanceFromNearestTower(gameEngine, it1->first)) * static_cast<double>(it1->second);
+        currentSum += (static_cast<double>(it1->second) / getDistanceFromNearestTower(gameEngine, it1->first));
     }
 
     for (map<pair<int, int>, int>::iterator it2 = ennemyArmy.begin(); it2 != ennemyArmy.end(); it2++)
     {
-        ennemySum += (1.0 / getDistanceFromNearestTower(gameEngine, it2->first)) * static_cast<double> (it2->second);
+        ennemySum += (static_cast<double>(it2->second) / getDistanceFromNearestTower(gameEngine, it2->first));
     }
     return currentSum - ennemySum;
 }
 
-double Bot::getDistanceFromNearestTower(GameEngine gameEngine, pair<int,int> position){
+double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> position){
     double yFixed = 5;
     double xMin = 10;
 
@@ -209,6 +209,46 @@ double Bot::getDistanceFromNearestTower(GameEngine gameEngine, pair<int,int> pos
     return xMin+yDistance+1;
 }
 
+double Bot::evalFunction(GameEngine &gameEngine)
+{
+    map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
+    map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
+    double currentSum = 0, ennemySum = 0;
+
+    for (map<pair<int, int>, int>::iterator it1 = currentArmy.begin(); it1 != currentArmy.end(); ++it1)
+    {
+        currentSum += gameEngine.getCurrentPlayer().getNumberOfTowerCaptured() + (static_cast<double>(it1->second) / getDistanceFromFocusedTower(gameEngine, it1->first, gameEngine.getCurrentPlayer()));
+    }
+
+    for (map<pair<int, int>, int>::iterator it2 = ennemyArmy.begin(); it2 != ennemyArmy.end(); it2++)
+    {
+        ennemySum += gameEngine.getEnnemyPlayer().getNumberOfTowerCaptured() + (static_cast<double>(it2->second) / getDistanceFromFocusedTower(gameEngine, it2->first, gameEngine.getEnnemyPlayer()));
+    }
+    return currentSum - ennemySum;
+}
+
+double Bot::getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> position,Player& player)
+{
+    pair<int,int> focusedTower = gameEngine.TOWER1;
+    if (gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER1, player))
+    {
+        focusedTower = gameEngine.TOWER2;
+    }
+    if (gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER1, player) && gameEngine.checkTowerCapturedByPlayer(gameEngine.TOWER2, player))
+    {
+        focusedTower = gameEngine.TOWER3;
+    }
+    std::cout << "focusedTower: " << focusedTower.first << focusedTower.second << std::endl;
+
+    double yFixed = 5;
+
+    double x = static_cast<double>(position.first);
+    double y = static_cast<double>(position.second);
+
+    double yDistance = abs(yFixed - y);
+    double xTower1 = abs(focusedTower.first - x);
+    return xTower1 + yDistance+1;
+}
 
 vector<pair<int, int>> Bot::getOldPosition(GameEngine gameEngine)
 {
@@ -233,67 +273,9 @@ vector<pair<int, int>> Bot::getNewPosition(pair<int, int> pair)
     return v; // pointer ? ref ?
 }
 
-double Bot::minMax2(GameEngine gameEngine, bool isMax, int depth)
-{
-    std::cout << " depth: " << depth << " isMax: " << isMax << " player: " << gameEngine.getCurrentIdPlayer() << endl;
-    if (gameEngine.getHasWon())
-    {
-        std::cout << "Win node! " << std::endl;
-        return numeric_limits<double>::infinity();
-    }
-    if (gameEngine.getHasLose())
-    {
-        std::cout << "Loose node! " << std::endl;
-        return -numeric_limits<double>::infinity();
-    }
-    if (depth == 0)
-    {
-        //std::cout << "F() : " << evalFunction(gameEngine) << " isMax: " << isMax << std::endl;
-        return evalFunction(gameEngine);
-    }
-    
-    if (isMax)
-    {
-        double value = -numeric_limits<double>::infinity();
-        vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
-        for (std::size_t i = 0; i < oldIndexes.size(); i++)
-        {
-            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
 
-            for (std::size_t j = 0; j < newIndexes.size(); j++)
-            {
-                if (verifyPlay(newIndexes[j]))
-                {
-                    GameEngine *copy = new GameEngine();
-                    *copy = gameEngine;
-                    copy->play(oldIndexes[i], newIndexes[j]);
-                    value = std::max(value,minMax2(*copy, false, depth - 1));
-                    delete (copy);
-                }
-            }
-        }
-        return value;
-    }
-    else
-    {
-        double value = numeric_limits<double>::infinity();
-        vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
-        for (std::size_t i = 0; i < oldIndexes.size(); i++)
-        {
-            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
 
-            for (std::size_t j = 0; j < newIndexes.size(); j++)
-            {
-                if (verifyPlay(newIndexes[j]))
-                {
-                    GameEngine *copy = new GameEngine();
-                    *copy = gameEngine;
-                    copy->play(oldIndexes[i], newIndexes[j]);
-                    value = std::min(value, minMax2(*copy, true, depth - 1));
-                    delete (copy);
-                }
-            }
-        }
-        return value;
-    }
-}
+
+
+
+
