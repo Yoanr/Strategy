@@ -27,8 +27,11 @@ Bot::Bot(GameEngine &gameEngineGiven) : gameEngine(gameEngineGiven)
 pair<pair<int, int>, pair<int, int>> Bot::getNextmove(Config::eval evGiven)
 {
     ev = evGiven;
-    //auto oldPosition = getRandomOldPosition();
-    //return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
+    if(evGiven == Config::eval::randomStrategy){
+        auto oldPosition = getRandomOldPosition();
+        return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
+    }
+
     return decisionMax(gameEngine);
 }
 
@@ -149,11 +152,11 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
     }*/
     if(depth == 0 ||gameEngine.getHasLose() ||gameEngine.getHasWon()){
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
-        if (ev == Config::eval::fct1)
+        if (ev == Config::eval::focusStrategy)
         {
             return evalFunction(gameEngine);
         }
-        else if (ev == Config::eval::fct2)
+        else if (ev == Config::eval::nearbyStrategy)
         {
             return evalFunction2(gameEngine);
         }
@@ -271,7 +274,7 @@ double Bot::getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> p
     {
         focusedTower = gameEngine.TOWER3;
     }
-    //std::cout << "focusedTower: " << focusedTower.first << focusedTower.second << std::endl;
+    //std::cout << "focusedTower: " << focusedTower.first << " " << focusedTower.second << std::endl;
 
     double yFixed = 5;
 

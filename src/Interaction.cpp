@@ -110,12 +110,19 @@ void Interaction::onMouse(S2D_Event e)
             else if (Config::MODE == Config::mode::aiversusaiMANUAL)
             {
                 onMouseBotPlay(Config::EVAL_FCT_AIP1);
+                if (gameEngine.getHasWon())
+                {
+                    break;
+                }
                 onMouseBotPlay(Config::EVAL_FCT_AIP2);
             }
             else if(Config::MODE == Config::mode::aiversusaiAUTO){
                 while (not gameEngine.getHasWon())
                 {
                     onMouseBotPlay(Config::EVAL_FCT_AIP1);
+                    if (gameEngine.getHasWon()){
+                        break;
+                    }
                     onMouseBotPlay(Config::EVAL_FCT_AIP2);
                 }
             }
@@ -163,6 +170,19 @@ void Interaction::idle()
     window->render = Lambda::make_function_ptr([this]() { Draw::getInstance().render(gameEngine); });
 
     S2D_Show(window);
+}
+
+int Interaction::automatize(){
+    while (not gameEngine.getHasWon())
+    {
+        onMouseBotPlay(Config::EVAL_FCT_AIP1);
+        if (gameEngine.getHasWon())
+        {
+            break;
+        }
+        onMouseBotPlay(Config::EVAL_FCT_AIP2);
+    }
+    return gameEngine.getEnnemyIdPlayer();
 }
 
 Interaction::Interaction(GameEngine gameEngineGiven) : gameEngine(gameEngineGiven)

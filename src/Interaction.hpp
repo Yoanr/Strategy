@@ -14,6 +14,7 @@ public:
     void idle();
     void stop();
     bool getwantToReplay();
+    int automatize();
 
 private:
     S2D_Window *window;

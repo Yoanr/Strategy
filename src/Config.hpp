@@ -27,8 +27,9 @@ public:
 
     enum eval
     {
-        fct1 = 1,
-        fct2 = 2
+        randomStrategy= 0,
+        focusStrategy = 1,
+        nearbyStrategy = 2
     };
 
     static const int SQUARESIZE{50};
@@ -40,9 +41,9 @@ public:
     static const bool PRINTBOMB{false};
     static const mode MODE{aiversusaiMANUAL};
 
-    static const eval EVAL_FCT_AIP1{eval::fct1};
-    static const eval EVAL_FCT_AIP2{eval::fct2};
-    static const int DEPTH{0};
+    static const eval EVAL_FCT_AIP1{eval::nearbyStrategy};
+    static const eval EVAL_FCT_AIP2{eval::focusStrategy};
+    static const int DEPTH{2};
 };
 
 #endif

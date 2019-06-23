@@ -2,8 +2,15 @@
 #include "Interaction.hpp"
 #include "GameEngine.hpp"
 
-int main()
+int main(int argc, char *argv[])
 {
+
+    if (argc == 2 && strcmp(argv[1],"--dev") == 0)
+    {
+        GameEngine *gameEngine = new GameEngine;
+        Interaction *interaction = new Interaction(*gameEngine);
+        return interaction->automatize();
+    }
     bool wantToReplay{true};
 
     while (wantToReplay)
