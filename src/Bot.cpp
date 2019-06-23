@@ -132,7 +132,8 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
     // std::cout << "(" << bestAction.second.first << "," << bestAction.second.second << ")" << std::endl;
     return bestAction;
 }
-
+//double Bot::alphabeta(){
+//}
 double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
 {
     /*if (gameEngine.getHasWon())

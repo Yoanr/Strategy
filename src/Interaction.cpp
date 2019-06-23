@@ -108,10 +108,17 @@ void Interaction::onMouse(S2D_Event e)
             if(Config::MODE == Config::mode::p1versusp2 || Config::MODE == Config::mode::p1versusai){
                 onMousePlay(pMouse);
             }
-            else if (Config::MODE == Config::mode::aiversusai)
+            else if (Config::MODE == Config::mode::aiversusaiMANUAL)
             {
+                onMouseBotPlay();
+                onMouseBotPlay();
+            }
+            else if(Config::MODE == Config::mode::aiversusaiAUTO){
+                while (not gameEngine.getHasWon())
+                {
                     onMouseBotPlay();
                     onMouseBotPlay();
+                }
             }
         }else{
             onMouseHasWon(pMouse);

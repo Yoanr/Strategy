@@ -19,8 +19,9 @@ public:
     enum mode
     {
         p1versusp2 = 0,
-        aiversusai = 1,
-        p1versusai = 2
+        aiversusaiAUTO = 1,
+        aiversusaiMANUAL = 2,
+        p1versusai = 3
 
     };
 
@@ -31,8 +32,8 @@ public:
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
-    static const mode MODE{p1versusp2};
-    static const int DEPTH{2};
+    static const mode MODE{aiversusaiAUTO};
+    static const int DEPTH{0};
 };
 
 #endif
