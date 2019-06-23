@@ -24,8 +24,9 @@ Bot::Bot(GameEngine &gameEngineGiven) : gameEngine(gameEngineGiven)
     srand(time(NULL));
 }
 
-pair<pair<int, int>, pair<int, int>> Bot::getNextmove()
+pair<pair<int, int>, pair<int, int>> Bot::getNextmove(eval evGiven)
 {
+    ev = evGiven;
     //auto oldPosition = getRandomOldPosition();
     //return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
     return decisionMax(gameEngine);
@@ -148,7 +149,11 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
     }*/
     if(depth == 0 ||gameEngine.getHasLose() ||gameEngine.getHasWon()){
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
-        return evalFunction2(gameEngine);
+        if(eval::fct1){
+            return evalFunction(gameEngine);
+        }else {
+            return evalFunction2(gameEngine);
+        }
     }
     vector<double> vals;
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);

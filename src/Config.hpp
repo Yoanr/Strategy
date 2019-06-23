@@ -32,7 +32,7 @@ public:
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
-    static const mode MODE{aiversusaiAUTO};
+    static const mode MODE{p1versusai};
     static const int DEPTH{0};
 };
 

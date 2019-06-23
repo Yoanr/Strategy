@@ -82,8 +82,7 @@ void Interaction::onMousePlay(pair<int, int> pMouse)
 
             if (Config::MODE == Config::mode::p1versusai && not(gameEngine.getHasWon()))
             {
-                pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
-                gameEngine.play(pair.first, pair.second);
+                onMouseBotPlay(Bot::eval::fct1);
             }
         }
     }
@@ -110,14 +109,14 @@ void Interaction::onMouse(S2D_Event e)
             }
             else if (Config::MODE == Config::mode::aiversusaiMANUAL)
             {
-                onMouseBotPlay();
-                onMouseBotPlay();
+                onMouseBotPlay(Bot::eval::fct2);
+                onMouseBotPlay(Bot::eval::fct1);
             }
             else if(Config::MODE == Config::mode::aiversusaiAUTO){
                 while (not gameEngine.getHasWon())
                 {
-                    onMouseBotPlay();
-                    onMouseBotPlay();
+                    onMouseBotPlay(Bot::eval::fct2);
+                    onMouseBotPlay(Bot::eval::fct1);
                 }
             }
         }else{
@@ -127,8 +126,9 @@ void Interaction::onMouse(S2D_Event e)
     }
 }
 
-void Interaction::onMouseBotPlay(){
-    pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove();
+void Interaction::onMouseBotPlay(Bot::eval eval)
+{
+    pair<pair<int, int>, pair<int, int>> pair = bot.getNextmove(eval);
     gameEngine.play(pair.first, pair.second);
 }
 

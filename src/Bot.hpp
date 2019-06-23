@@ -11,8 +11,15 @@ using namespace std;
 class Bot
 {
 public:
-    pair<pair<int, int>, pair<int, int>> getNextmove();
+    enum eval
+    {
+        fct1 = 1,
+        fct2 = 2
+    };
+    pair<pair<int, int>, pair<int, int>> getNextmove(eval evGiven);
     Bot(GameEngine& gameEngine);
+
+    eval ev{eval::fct1};
 
 private:
     GameEngine& gameEngine;
