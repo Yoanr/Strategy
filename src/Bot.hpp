@@ -11,18 +11,12 @@ using namespace std;
 class Bot
 {
 public:
-    enum eval
-    {
-        fct1 = 1,
-        fct2 = 2
-    };
-    pair<pair<int, int>, pair<int, int>> getNextmove(eval evGiven);
+    pair<pair<int, int>, pair<int, int>> getNextmove(Config::eval evGiven);
     Bot(GameEngine& gameEngine);
-
-    eval ev{eval::fct1};
 
 private:
     GameEngine& gameEngine;
+    Config::eval ev;
     vector<pair<int, int>> bombHitted;
     bool verifyPlay(pair<int, int> position);
     pair<int, int> getRandomOldPosition();

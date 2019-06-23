@@ -24,7 +24,7 @@ Bot::Bot(GameEngine &gameEngineGiven) : gameEngine(gameEngineGiven)
     srand(time(NULL));
 }
 
-pair<pair<int, int>, pair<int, int>> Bot::getNextmove(eval evGiven)
+pair<pair<int, int>, pair<int, int>> Bot::getNextmove(Config::eval evGiven)
 {
     ev = evGiven;
     //auto oldPosition = getRandomOldPosition();
@@ -149,9 +149,12 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
     }*/
     if(depth == 0 ||gameEngine.getHasLose() ||gameEngine.getHasWon()){
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
-        if(eval::fct1){
+        if (ev == Config::eval::fct1)
+        {
             return evalFunction(gameEngine);
-        }else {
+        }
+        else if (ev == Config::eval::fct2)
+        {
             return evalFunction2(gameEngine);
         }
     }

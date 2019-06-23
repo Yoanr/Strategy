@@ -25,6 +25,12 @@ public:
 
     };
 
+    enum eval
+    {
+        fct1 = 1,
+        fct2 = 2
+    };
+
     static const int SQUARESIZE{50};
     static const int NUMBEROFSQUARE{11};
     static const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
@@ -32,7 +38,10 @@ public:
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
-    static const mode MODE{p1versusai};
+    static const mode MODE{aiversusaiMANUAL};
+
+    static const eval EVAL_FCT_AIP1{eval::fct1};
+    static const eval EVAL_FCT_AIP2{eval::fct2};
     static const int DEPTH{0};
 };
 
