@@ -3,7 +3,6 @@
 
 #include "Square.hpp"
 #include "color.hpp"
-#include <iostream>
 #include "GameEngine.hpp"
 
 
@@ -35,12 +34,13 @@ private:
 
     void square(Square square);
     void armyPower(int armyPower);
-    void victory(int idPlayer);
+
     void menuChoice();
-    void showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal, int currentPlayerId);
+    void field(GameEngine &gameEngine);
+    void possibleArmy(GameEngine &gameEngine);
+    void showInfo(GameEngine &gameEngine);
     void showFight();
-    void field(pair<int, int> position, GameEngine &gameEngine);
-    void possibleArmy(pair<int, int> position, GameEngine &gameEngine);
+    void victory(GameEngine &gameEngine);
 };
 
 #endif
