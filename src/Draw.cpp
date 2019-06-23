@@ -11,6 +11,10 @@ Draw& Draw::getInstance(){
 
 void Draw::render(GameEngine &gameEngine)
 {
+    if(not gameEngine.getChoice()){
+        menuChoice();
+        return;
+    }
     for (int i = 0; i < Config::NUMBEROFSQUARE; i++)
     {
         for (int j = 0; j < Config::NUMBEROFSQUARE; j++)
@@ -134,6 +138,17 @@ void Draw::rectangle(int x1, int y1, int width, int length, color::Color c){
 void Draw::square(int x1, int y1, int width, color::Color color){
     rectangle(x1,y1,width,width,color);
 }
+void Draw::menuChoice()
+{
+    img(std::string("./resources/img/background.png"),0,0,800,555);
+    text(std::string("Menu"), 70, color::white, 320, 100);
+    rectangle(180, 200, 450, 150, color::grey);
+    line(330,200,330,350,Config::LINEWIDTH,color::black);
+    line(480, 200, 480, 350, Config::LINEWIDTH, color::black);
+    text(std::string("P1 vs P2"), 20, color::white, 210, 260);
+    text(std::string("P1 vs AI"), 20, color::white, 360, 260);
+    text(std::string("AI vs AI"), 20, color::white, 510, 260);
+}
 
 void Draw::victory(int idPlayer)
 {
@@ -172,6 +187,23 @@ void Draw::text(string str,int txtSize,color::Color c,int x,int y){
     S2D_FreeText(txt);
 }
 
+void Draw::img(string path, int x, int y, int width, int height)
+{
+    S2D_Image *img = S2D_CreateImage(path.c_str());
+    if (img)
+    {
+        img->x = x;
+        img->y = y;
+        img->width = width;
+        img->height = height;
+    }
+    else
+    {
+        cout << "img error" << endl;
+    }
+    S2D_DrawImage(img);
+}
+
 void Draw::square4Lines(int x1,int y1, int width, int length ,int linewidth,color::Color color)
 {
     int x1w = x1+width;
@@ -185,8 +217,31 @@ void Draw::square4Lines(int x1,int y1, int width, int length ,int linewidth,colo
 
 void Draw::showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal,int currentPlayerId)
 {
-    string const strRound(string("Round ") + to_string(round) + string(" ,Player ")+ to_string(currentPlayerId));
-    text(strRound, 20, color::white, 560, 265);
+    if(Config::getInstance().MODE == Config::mode::p1versusp2){
+        text(std::string("P1"), 80, color::red, 620, 100);
+        text(std::string("P2"), 80, color::blue, 620, 350);
+    }
+    else if (Config::getInstance().MODE == Config::mode::p1versusai)
+    {
+        text(std::string("P1"), 80, color::red, 620, 100);
+        text(std::string("AI"), 80, color::blue, 620, 350);
+    }
+    else if (Config::getInstance().MODE == Config::mode::aiversusaiMANUAL)
+    {
+        text(std::string("AI"), 80, color::red, 620, 100);
+        text(std::string("AI"), 80, color::blue, 620, 350);
+    }
+    line(550, 250, 800, 250, Config::LINEWIDTH, color::white);
+    line(550, 300, 800, 300, Config::LINEWIDTH, color::white);
+
+
+    if(currentPlayerId == 1){
+        line(630,200,710,200,Config::LINEWIDTH,color::red);
+    }else{
+        line(630, 450, 710, 450, Config::LINEWIDTH, color::blue);
+    }
+    string const strRound(string("Round ") + to_string(round));
+    text(strRound, 20, color::white, 630, 265);
 
     string const strInfoP1(string("ArmyPower:") + to_string(armyPowerTotal.first)+string(" , BombHitted:")+to_string(bombHit.first));
     text(strInfoP1, 10, color::white, 560, 10);

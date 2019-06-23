@@ -22,6 +22,8 @@ public:
     bool isNotEnnemySpawn(pair<int, int> position);
     void setSelectedSquare(pair<int, int>);
     bool getHasWon();
+    bool getChoice();
+    void setChoice();
     void setHasWon(bool hasWonGiven); // cheatcode
     void play(pair<int, int> oldPosition, pair<int, int> newPosition);
     void setColorSquareByPlayer(pair<int, int> position, int idPlayer);
@@ -44,6 +46,7 @@ public:
 private:
     int getProbaBomb(Config::Level level);
     int hasWon{false};
+    bool choice{false};
     int generateNumber0into100();
     map<pair<int, int>, Square> board;
     const int GRIDSIZE = 12;

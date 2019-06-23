@@ -283,6 +283,14 @@ GameEngine& GameEngine::operator=(const GameEngine &other){
     currentRound = other.currentRound;
 return *this;
 }
+
+bool GameEngine::getChoice(){
+    return choice;
+}
+void GameEngine::setChoice()
+{
+    choice = true;
+}
 GameEngine::~GameEngine()
 {
     

@@ -8,6 +8,10 @@ using namespace std;
 class Config
 {
 public:
+    static Config &getInstance(){
+        static Config instance;
+        return instance;
+    }
     enum  Level   {
         wtf = 0,
         easy    = 1,
@@ -39,11 +43,17 @@ public:
     static const Level DIFFICULTY{wtf};
     static const bool SQUAREUGLY{false};
     static const bool PRINTBOMB{false};
-    static const mode MODE{aiversusaiMANUAL};
+    mode MODE;
 
     static const eval EVAL_FCT_AIP1{eval::nearbyStrategy};
     static const eval EVAL_FCT_AIP2{eval::focusStrategy};
-    static const int DEPTH{4};
+    static const int DEPTH{0};
+
+private:
+    Config() = default;
+    ~Config() = default;
+    Config(const Config &) = delete;
+    Config &operator=(const Config &) = delete;
 };
 
 #endif

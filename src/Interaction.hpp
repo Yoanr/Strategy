@@ -27,6 +27,7 @@ private:
     void onMousePlay(pair<int, int> pMouse);
     void onMouseBotPlay(Config::eval evGiven);
     void onMouseHasWon(pair<int, int> pMouse);
+    void onMouseChoice(pair<int, int> pMouse);
     void setSelectedSquare(pair<int, int> position, bool isSelected);
     bool checkFirstClick(pair<int, int> positionClicked);
     bool checkSecondClick(pair<int, int> positionClicked);

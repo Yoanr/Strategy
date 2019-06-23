@@ -28,6 +28,7 @@ private:
     void rectangle(int x1, int y1, int width, int length, color::Color color);
     void square(int x1, int y1, int width,color::Color color); // draw a square easily
     void text(string str, int txtSize, color::Color c, int x, int y);
+    void img(string path, int x, int y, int width, int height);
     void square4Lines(int x1, int y1, int width, int length, int linewidth, color::Color color);
     void D2Lines(color::Color color);
     void D4Lines(color::Color color);
@@ -35,6 +36,7 @@ private:
     void square(Square square);
     void armyPower(int armyPower);
     void victory(int idPlayer);
+    void menuChoice();
     void showInfo(int round, pair<int, int> bombHit, pair<int, int> armyPowerTotal, int currentPlayerId);
     void showFight();
     void field(pair<int, int> position, GameEngine &gameEngine);
