@@ -154,11 +154,11 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
         if (ev == Config::eval::focusStrategy)
         {
-            return evalFunction(gameEngine);
+            return evalFctFocusedTower(gameEngine);
         }
         else if (ev == Config::eval::nearbyStrategy)
         {
-            return evalFunction2(gameEngine);
+            return evalFctNearbyTower(gameEngine);
         }
     }
     vector<double> vals;
@@ -225,7 +225,7 @@ double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> po
     return xMin+yDistance+1;
 }
 
-double Bot::evalFunction(GameEngine &gameEngine)
+double Bot::evalFctFocusedTower(GameEngine &gameEngine)
 {
     map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
     map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
@@ -243,7 +243,7 @@ double Bot::evalFunction(GameEngine &gameEngine)
     return currentSum - ennemySum;
 }
 
-double Bot::evalFunction2(GameEngine& gameEngine)
+double Bot::evalFctNearbyTower(GameEngine &gameEngine)
 {
 
     map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
