@@ -1,9 +1,10 @@
 #ifndef Interaction_H
 #define Interaction_H
 
-#include <simple2d.h>
+#include "../inc/simple2d.h"
 #include "GameEngine.hpp"
 #include "color.hpp"
+#include "Bot.hpp"
 
 using namespace std;
 class Interaction {
@@ -13,19 +14,20 @@ public:
     void idle();
     void stop();
     bool getwantToReplay();
+    int automatize();
 
 private:
     S2D_Window *window;
     GameEngine gameEngine;
+    Bot bot{gameEngine};
     bool alreadyClicked{false};
     bool wantToReplay{false};
 
     void onMouse(S2D_Event e);
     void onMousePlay(pair<int, int> pMouse);
+    void onMouseBotPlay(Config::eval evGiven);
     void onMouseHasWon(pair<int, int> pMouse);
-    void render();
-    void drawField(pair<int, int> position);
-    void drawPossibleArmy(pair<int, int> position);
+    void onMouseChoice(pair<int, int> pMouse);
     void setSelectedSquare(pair<int, int> position, bool isSelected);
     bool checkFirstClick(pair<int, int> positionClicked);
     bool checkSecondClick(pair<int, int> positionClicked);

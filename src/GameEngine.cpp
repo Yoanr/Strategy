@@ -10,8 +10,10 @@ int GameEngine::getProbaBomb(Config::Level level){
 }
 
 GameEngine::GameEngine() {
+#ifdef _WIN32
+#else
     srand(time(NULL));
-
+#endif
     player1.moveOrMergeArmy(SPAWNP1, 1);
 
     for (int i = 0; i < GRIDSIZE; i++) {
@@ -85,6 +87,11 @@ void GameEngine::resetSelectedSquare()
 bool GameEngine::getHasWon(){
     return hasWon;
 }
+
+bool GameEngine::getHasLose()
+{
+    return (getEnnemyPlayer().getNumberOfTowerCaptured() == 3);
+}
 void GameEngine::setHasWon(bool hasWonGiven){
     hasWon = hasWonGiven;
 }
@@ -132,17 +139,17 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 
     while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
         int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
-        sleep(1);
+        //sleep(1);
         int rand = generateNumber0into100();
-        std::cout << "rand: " << rand << std::endl;
+        //std::cout << "rand: " << rand << std::endl;
         if ( rand < proportion * armyPowerCurrentPlayer){
             armyPowerEnnemyPlayer--;
-            std::cout << "fight won current" << std::endl;
+            //std::cout << "fight won current" << std::endl;
         }else{
             armyPowerCurrentPlayer--;
-            std::cout << "fight won ennemy" << std::endl;
+            //std::cout << "fight won ennemy" << std::endl;
         }
-        std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
+        //std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
     }
 
     if (armyPowerCurrentPlayer>0){
@@ -153,6 +160,7 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
         if (newPosition == TOWER1 || newPosition == TOWER2 || newPosition == TOWER3)
         {
             getCurrentPlayer().numberOfTowerCapturedIncremented();
+            getEnnemyPlayer().numberOfTowerCapturedDecremented();
         }
 
         return true;
@@ -164,12 +172,22 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 }
 
 void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
-    cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
+    getCurrentPlayer().numberOfBombHitedIncremented();
+    //cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
     Player bomb(3); // create virtual ennemy
     bomb.moveOrMergeArmy(newPosition, getCurrentPlayer().getArmyPower(oldPosition));
     if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
         getSquare(newPosition).setType(Square::Type::basic);
     }
+}
+
+pair<int, int> GameEngine::getNbrOfBombHitted(){
+    return pair<int,int>(player1.getNumberofBombHitted(),player2.getNumberofBombHitted());
+}
+
+pair<int, int> GameEngine::getTotalPowerArmy()
+{
+    return pair<int, int>(player1.getTotalPowerArmy(), player2.getTotalPowerArmy());
 }
 
 int GameEngine::getCurrentRound(){
@@ -251,6 +269,28 @@ pair<int, int> GameEngine::getSelectedSquare()
     return selectedSquareIndexes;
 }
 
+bool GameEngine::checkTowerCapturedByPlayer(const pair<int, int>& towerPosition,Player& player)
+{
+    return (player.getArmyPower(towerPosition) > 0);
+}
+
+GameEngine& GameEngine::operator=(const GameEngine &other){
+    hasWon = other.hasWon;
+    numberOfRound = other.numberOfRound;
+    player1 = other.player1;
+    player2 = other.player2;
+    currentPlayerId = other.currentPlayerId;
+    currentRound = other.currentRound;
+return *this;
+}
+
+bool GameEngine::getChoice(){
+    return choice;
+}
+void GameEngine::setChoice()
+{
+    choice = true;
+}
 GameEngine::~GameEngine()
 {
     

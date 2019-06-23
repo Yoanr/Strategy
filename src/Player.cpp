@@ -71,6 +71,22 @@ int Player::getArmyPower(const pair<int, int> position)
     return army[position];
 }
 
+map<pair<int, int>, int>& Player::getArmy(){
+    return army;
+}
+
+pair<int, int> Player::getPositionByIndex(int index){
+    int tmpIndex{0};
+    for (map<pair<int, int>, int>::iterator it = army.begin(); it != army.end(); ++it)
+    {
+        if(tmpIndex == index){
+            return it->first;
+        }
+        tmpIndex++;
+    }
+    return pair<int,int>(-1,-1);
+}
+
 int Player::getId(){
     return id;
 }
@@ -89,4 +105,19 @@ void Player::numberOfTowerCapturedIncremented()
 void Player::numberOfTowerCapturedDecremented()
 {
     numberOfTowerCaptured--;
+}
+
+void Player::numberOfBombHitedIncremented(){
+    numberOfBombHited++;
+}
+int Player::getNumberofBombHitted(){
+    return numberOfBombHited;
+}
+
+int Player::getTotalPowerArmy(){
+    int totalPowerArmy{0};
+    for (map<pair<int, int>, int>::iterator it = army.begin(); it != army.end();++it){
+        totalPowerArmy+=it->second;
+    }
+    return totalPowerArmy;
 }
