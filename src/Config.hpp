@@ -40,9 +40,9 @@ public:
     static const int NUMBEROFSQUARE{11};
     static const int GRIDSIZE{SQUARESIZE * NUMBEROFSQUARE};
     static const int LINEWIDTH{2};
-    static const Level DIFFICULTY{wtf};
+    static const Level DIFFICULTY{hard};
     static const bool SQUAREUGLY{false};
-    static const bool PRINTBOMB{false};
+    static const bool PRINTBOMB{true};
     mode MODE;
 
     static const eval EVAL_FCT_AIP1{eval::nearbyStrategy};

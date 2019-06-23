@@ -5,12 +5,13 @@
 
 #include <chrono>
 
-void print(std::vector<pair<int,int>> input)
+void print(std::set<pair<int,int>> input)
 {
-    for (unsigned int i = 0; i < input.size(); i++)
+    for (pair<int, int> const &position : input)
     {
-     //   std::cout << input.at(i).first << " " << input.at(i).second << std::endl;
+        std::cout << "(" << position.first << "," << position.second << ") - ";
     }
+    std::cout << "\n";
 }
 
 void printd(std::vector<double> input)
@@ -44,6 +45,7 @@ pair<pair<int, int>, pair<int, int>> Bot::getNextmove(Config::eval evGiven)
     cout << "Elapsed time in seconds : "
          << chrono::duration_cast<chrono::seconds>(end - start).count()
          << " sec";*/
+
     return decisionMax(gameEngine);
 }
 
@@ -113,17 +115,17 @@ function minimax(node, depth, maximizingPlayer) is
 pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
     // std::cout<< "ancien choix" << std::endl;
-    print(oldIndexes);
+    //print(oldIndexes);
     pair<pair<int,int>,pair<int,int>> bestAction;
     double valeurMin =  numeric_limits<double>::infinity();
     for (std::size_t i = 0; i < oldIndexes.size(); i++)
     {
        // std::cout << "oldPosition" << oldIndexes[i].first << ',' << oldIndexes[i].second << std::endl;
-        vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
-        for (std::size_t j = 0; j < newIndexes.size(); j++)
-        {
-            if (verifyPlay(newIndexes[j]))
-            {
+       vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i], gameEngine);
+       for (std::size_t j = 0; j < newIndexes.size(); j++)
+       {
+           if (verifyPlay(newIndexes[j]))
+           {
                // std::cout<< "newPositon " << newIndexes[j].first <<',' << newIndexes[j].second << std::endl;
                 GameEngine *copy = new GameEngine();
                 *copy = gameEngine;
@@ -147,6 +149,20 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
     }
     // std::cout << "(" << bestAction.first.first << ","<< bestAction.first.second << ")";
     // std::cout << "(" << bestAction.second.first << "," << bestAction.second.second << ")" << std::endl;
+
+    //if isbomb , memorize it
+    if (gameEngine.isBomb(bestAction.second)){
+        std::cout << "BOOM" << std::endl;
+        if(gameEngine.getCurrentIdPlayer() == 1){
+            bombHitted_player1.insert(std::pair<int, int>(bestAction.second));
+        }else{
+            bombHitted_player2.insert(std::pair<int, int>(bestAction.second));
+        }
+    }
+   std::cout << "player1: " << std::endl;
+    print(bombHitted_player1);
+    std::cout << "player2: " << std::endl;
+    print(bombHitted_player2);
     return bestAction;
 }
 //double Bot::alphabeta(){
@@ -178,7 +194,7 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
     vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
     for (std::size_t i = 0; i < oldIndexes.size(); i++)
     {
-        vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
+        vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i], gameEngine);
 
         for (std::size_t j = 0; j < newIndexes.size(); j++)
         {
@@ -310,16 +326,26 @@ vector<pair<int, int>> Bot::getOldPosition(GameEngine gameEngine)
     return v; // pointer ? ref ?
 }
 
-vector<pair<int, int>> Bot::getNewPosition(pair<int, int> pair)
+vector<pair<int, int>> Bot::getNewPosition(pair<int, int> pair,GameEngine gameEngine)
 {
     vector<std::pair<int, int>> v;
 
-    v.push_back(std::pair<int, int>(pair.first + 1, pair.second));
-    v.push_back(std::pair<int, int>(pair.first, pair.second + 1));
-    v.push_back(std::pair<int, int>(pair.first - 1, pair.second));
-    v.push_back(std::pair<int, int>(pair.first, pair.second - 1));
+        v.push_back(std::pair<int, int>(pair.first + 1, pair.second));
+        v.push_back(std::pair<int, int>(pair.first, pair.second + 1));
+        v.push_back(std::pair<int, int>(pair.first - 1, pair.second));
+        v.push_back(std::pair<int, int>(pair.first, pair.second - 1));
 
-    return v; // pointer ? ref ?
+    for (std::size_t i = 0; i < v.size(); i++)
+    {
+        if (gameEngine.getCurrentIdPlayer() == 1 && bombHitted_player1.find(v[i]) != bombHitted_player1.end()){
+            v.erase(v.begin() + i);
+        }
+        if (gameEngine.getCurrentIdPlayer() == 2 && bombHitted_player2.find(v[i]) != bombHitted_player1.end())
+        {
+            v.erase(v.begin() + i);
+        }
+    }
+        return v; // pointer ? ref ?
 }
 
 double Bot::alphabeta(GameEngine& gameEngine, bool isMax, int depth,double A,double B)
@@ -342,7 +368,7 @@ double Bot::alphabeta(GameEngine& gameEngine, bool isMax, int depth,double A,dou
         vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
         for (std::size_t i = 0; i < oldIndexes.size(); i++)
         {
-            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
+            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i],gameEngine);
 
             for (std::size_t j = 0; j < newIndexes.size(); j++)
             {
@@ -368,7 +394,7 @@ double Bot::alphabeta(GameEngine& gameEngine, bool isMax, int depth,double A,dou
         vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
         for (std::size_t i = 0; i < oldIndexes.size(); i++)
         {
-            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
+            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i], gameEngine);
 
             for (std::size_t j = 0; j < newIndexes.size(); j++)
             {

@@ -291,6 +291,9 @@ void GameEngine::setChoice()
 {
     choice = true;
 }
+bool GameEngine::isBomb(pair<int, int> position){
+return (getSquare(position).getType() == Square::Type::bomb);
+}
 GameEngine::~GameEngine()
 {
     

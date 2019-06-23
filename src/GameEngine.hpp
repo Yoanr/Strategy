@@ -42,6 +42,7 @@ public:
     const pair<int, int> TOWER2{5, 5};
     const pair<int, int> TOWER3{9, 5};
     bool checkTowerCapturedByPlayer(const pair<int, int>& towerPosition,Player& player);
+    bool isBomb(pair<int, int> position);
 
 private:
     int getProbaBomb(Config::Level level);

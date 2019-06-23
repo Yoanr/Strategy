@@ -5,6 +5,7 @@
 #include "GameEngine.hpp"
 #include "Config.hpp"
 #include <vector>
+#include <set>
 
 using namespace std;
 
@@ -17,13 +18,14 @@ public:
 private:
     GameEngine& gameEngine;
     Config::eval ev;
-    vector<pair<int, int>> bombHitted;
+    set<pair<int, int>> bombHitted_player1;
+    set<pair<int, int>> bombHitted_player2;
     bool verifyPlay(pair<int, int> position);
     pair<int, int> getRandomOldPosition();
     pair<int, int> getRandomNewPosition(pair<int, int> oldPosition);
     double minMax(GameEngine& gameEngine, bool isMax, int depth);
     vector<pair<int, int>> getOldPosition(GameEngine gameEngine);
-    vector<pair<int, int>> getNewPosition(pair<int, int> pair);
+    vector<pair<int, int>> getNewPosition(pair<int, int> pair, GameEngine gameEngine);
     pair<pair<int, int>, pair<int, int>> decisionMax(GameEngine& gameEngine);
 
     double getDistanceFromNearestTower(GameEngine &gameEngine, pair<int, int> position, Player &player);
