@@ -31,6 +31,8 @@ private:
 
     double evalFctFocusedTower(GameEngine &gameEngine);
     double evalFctNearbyTower(GameEngine &gameEngine);
+
+    double alphabeta(GameEngine &gameEngine, bool isMax, int depth, double A, double B);
 };
 
 #endif

@@ -42,8 +42,8 @@ public:
     static const mode MODE{aiversusaiMANUAL};
 
     static const eval EVAL_FCT_AIP1{eval::nearbyStrategy};
-    static const eval EVAL_FCT_AIP2{eval::nearbyStrategy};
-    static const int DEPTH{0};
+    static const eval EVAL_FCT_AIP2{eval::focusStrategy};
+    static const int DEPTH{4};
 };
 
 #endif

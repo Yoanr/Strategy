@@ -3,6 +3,8 @@
 #include <math.h>
 #include <algorithm>
 
+#include <chrono>
+
 void print(std::vector<pair<int,int>> input)
 {
     for (unsigned int i = 0; i < input.size(); i++)
@@ -31,7 +33,17 @@ pair<pair<int, int>, pair<int, int>> Bot::getNextmove(Config::eval evGiven)
         auto oldPosition = getRandomOldPosition();
         return pair<pair<int, int>, pair<int, int>>(oldPosition, getRandomNewPosition(oldPosition));
     }
+    /*auto start = chrono::steady_clock::now();
+    auto decision = decisionMax(gameEngine);
+    auto end = chrono::steady_clock::now();
 
+    cout << "Elapsed time in milliseconds : "
+         << chrono::duration_cast<chrono::milliseconds>(end - start).count()
+         << " ms" << endl;
+
+    cout << "Elapsed time in seconds : "
+         << chrono::duration_cast<chrono::seconds>(end - start).count()
+         << " sec";*/
     return decisionMax(gameEngine);
 }
 
@@ -117,7 +129,8 @@ pair<pair<int,int>,pair<int,int>> Bot::decisionMax(GameEngine& gameEngine){
                 *copy = gameEngine;
                 copy->play(oldIndexes[i], newIndexes[j]);
 
-                double value = minMax(*copy, true, Config::DEPTH);
+                //double value = minMax(*copy, true, Config::DEPTH);
+                double value = alphabeta(*copy, true, Config::DEPTH, -numeric_limits<double>::infinity(), numeric_limits<double>::infinity());
                 delete(copy);;
 
                 if (value < valeurMin)
@@ -309,9 +322,70 @@ vector<pair<int, int>> Bot::getNewPosition(pair<int, int> pair)
     return v; // pointer ? ref ?
 }
 
+double Bot::alphabeta(GameEngine& gameEngine, bool isMax, int depth,double A,double B)
+{
+    if (depth == 0 || gameEngine.getHasLose() || gameEngine.getHasWon())
+    {
+        if (ev == Config::eval::focusStrategy)
+        {
+            return evalFctFocusedTower(gameEngine);
+        }
+        else if (ev == Config::eval::nearbyStrategy)
+        {
+            return evalFctNearbyTower(gameEngine);
+        }
+    }
 
+    if (isMax)
+    {
+        double value = -numeric_limits<double>::infinity();
+        vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
+        for (std::size_t i = 0; i < oldIndexes.size(); i++)
+        {
+            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
 
+            for (std::size_t j = 0; j < newIndexes.size(); j++)
+            {
+                if (verifyPlay(newIndexes[j]))
+                {
+                    GameEngine *copy = new GameEngine();
+                    *copy = gameEngine;
+                    copy->play(oldIndexes[i], newIndexes[j]);
+                    value = std::max(value, alphabeta(*copy, false, depth - 1, A, B));
+                    if(value >= B){
+                        return value;
+                    }
+                    A = std::max(A,value);
+                    delete (copy);
+                }
+            }
+        }
+        return value;
+    }
+    else
+    {
+        double value = numeric_limits<double>::infinity();
+        vector<pair<int, int>> oldIndexes = getOldPosition(gameEngine);
+        for (std::size_t i = 0; i < oldIndexes.size(); i++)
+        {
+            vector<pair<int, int>> newIndexes = getNewPosition(oldIndexes[i]);
 
-
-
-
+            for (std::size_t j = 0; j < newIndexes.size(); j++)
+            {
+                if (verifyPlay(newIndexes[j]))
+                {
+                    GameEngine *copy = new GameEngine();
+                    *copy = gameEngine;
+                    copy->play(oldIndexes[i], newIndexes[j]);
+                    value = std::min(value, alphabeta(*copy, true, depth - 1, A, B));
+                    if(A >= value){
+                        return value;
+                    }
+                    B = std::min(B,value);
+                    delete (copy);
+                }
+            }
+        }
+        return value;
+    }
+}
