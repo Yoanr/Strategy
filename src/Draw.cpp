@@ -27,7 +27,7 @@ void Draw::render(GameEngine &gameEngine)
 
     if (gameEngine.getHasWon())
     {
-        victory(gameEngine);
+         victory(gameEngine);
     }
 }
 
