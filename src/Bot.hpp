@@ -29,8 +29,8 @@ private:
     double getDistanceFromNearestTower(GameEngine &gameEngine, pair<int, int> position, Player &player);
     double getDistanceFromFocusedTower(GameEngine &gameEngine, pair<int, int> position, Player &player);
 
-    double evalFctFocusedTower(GameEngine &gameEngine);
-    double evalFctNearbyTower(GameEngine &gameEngine);
+    double evalFctFocusedTower(GameEngine &gameEngine, int isMax);
+    double evalFctNearbyTower(GameEngine &gameEngine, int isMax);
 
     double alphabeta(GameEngine &gameEngine, bool isMax, int depth, double A, double B);
 };

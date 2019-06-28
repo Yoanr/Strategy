@@ -163,11 +163,11 @@ double Bot::minMax(GameEngine& gameEngine,bool isMax,int depth)
         //std::cout << " depth: " << depth << " evalFunction: " << evalFunction(gameEngine) << " player: " << gameEngine.getCurrentIdPlayer() << endl;
         if (ev == Config::eval::focusStrategy)
         {
-            return evalFctFocusedTower(gameEngine);
+            return evalFctFocusedTower(gameEngine, isMax);
         }
         else if (ev == Config::eval::nearbyStrategy)
         {
-            return evalFctNearbyTower(gameEngine);
+            return evalFctNearbyTower(gameEngine, isMax);
         }
     }
     vector<double> vals;
@@ -234,7 +234,7 @@ double Bot::getDistanceFromNearestTower(GameEngine& gameEngine, pair<int,int> po
     return xMin+yDistance+1;
 }
 
-double Bot::evalFctFocusedTower(GameEngine &gameEngine)
+double Bot::evalFctFocusedTower(GameEngine &gameEngine, int isMax)
 {
     map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
     map<pair<int, int>, int> ennemyArmy = gameEngine.getEnnemyPlayer().getArmy();
@@ -249,10 +249,13 @@ double Bot::evalFctFocusedTower(GameEngine &gameEngine)
     {
         ennemySum += gameEngine.getEnnemyPlayer().getNumberOfTowerCaptured() + (static_cast<double>(it2->second) / getDistanceFromFocusedTower(gameEngine, it2->first, gameEngine.getEnnemyPlayer()));
     }
+    if(not isMax){
+        return ennemySum - currentSum;
+    }
     return currentSum - ennemySum;
 }
 
-double Bot::evalFctNearbyTower(GameEngine &gameEngine)
+double Bot::evalFctNearbyTower(GameEngine &gameEngine, int isMax)
 {
 
     map<pair<int, int>, int> currentArmy = gameEngine.getCurrentPlayer().getArmy();
@@ -267,6 +270,10 @@ double Bot::evalFctNearbyTower(GameEngine &gameEngine)
     for (map<pair<int, int>, int>::iterator it2 = ennemyArmy.begin(); it2 != ennemyArmy.end(); it2++)
     {
         ennemySum += gameEngine.getEnnemyPlayer().getNumberOfTowerCaptured() + (static_cast<double>(it2->second) / getDistanceFromNearestTower(gameEngine, it2->first, gameEngine.getEnnemyPlayer()));
+    }
+    if (not isMax)
+    {
+        return ennemySum - currentSum;
     }
     return currentSum - ennemySum;
 }
@@ -324,11 +331,11 @@ double Bot::alphabeta(GameEngine& gameEngine, bool isMax, int depth,double A,dou
     {
         if (ev == Config::eval::focusStrategy)
         {
-            return evalFctFocusedTower(gameEngine);
+            return evalFctFocusedTower(gameEngine,isMax);
         }
         else if (ev == Config::eval::nearbyStrategy)
         {
-            return evalFctNearbyTower(gameEngine);
+            return evalFctNearbyTower(gameEngine, isMax);
         }
     }
 

@@ -47,7 +47,7 @@ public:
 
     static const eval EVAL_FCT_AIP1{eval::nearbyStrategy};
     static const eval EVAL_FCT_AIP2{eval::focusStrategy};
-    static const int DEPTH{2};
+    static const int DEPTH{1};
 
 private:
     Config() = default;
