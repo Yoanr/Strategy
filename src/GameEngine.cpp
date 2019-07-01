@@ -139,17 +139,12 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 
     while (armyPowerCurrentPlayer > 0 && armyPowerEnnemyPlayer > 0){
         int proportion = 100 / (armyPowerCurrentPlayer + armyPowerEnnemyPlayer);
-        //sleep(1);
         int rand = generateNumber0into100();
-        //std::cout << "rand: " << rand << std::endl;
         if ( rand < proportion * armyPowerCurrentPlayer){
             armyPowerEnnemyPlayer--;
-            //std::cout << "fight won current" << std::endl;
         }else{
             armyPowerCurrentPlayer--;
-            //std::cout << "fight won ennemy" << std::endl;
         }
-        //std::cout << "resume fight: pcurrent" << armyPowerCurrentPlayer << ", pennemy" << armyPowerEnnemyPlayer << std::endl;
     }
 
     if (armyPowerCurrentPlayer>0){
@@ -173,7 +168,6 @@ bool GameEngine::fightPlayerArmy(pair<int, int> oldPosition, pair<int, int> newP
 
 void GameEngine::moveToBomb(pair<int, int> oldPosition, pair<int, int> newPosition) {
     getCurrentPlayer().numberOfBombHitedIncremented();
-    //cout << "BOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOM ! :(" << endl;
     Player bomb(3); // create virtual ennemy
     bomb.moveOrMergeArmy(newPosition, getCurrentPlayer().getArmyPower(oldPosition));
     if(fightPlayerArmy(oldPosition, newPosition, bomb)){ // if win bomb become basic square
@@ -293,5 +287,4 @@ void GameEngine::setChoice()
 }
 GameEngine::~GameEngine()
 {
-    
 }
